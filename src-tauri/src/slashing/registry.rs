@@ -4,7 +4,7 @@ use std::collections::HashSet;
 use std::sync::{Arc, Mutex};
 
 use super::traits::{LVNTokenLike, MeshManagerLike, ProofRegistryLike, VaultLike};
-use super::types::{Address, ConsensusAuth, SlashingError};
+use super::types::{Address, ConsensusAuth, Signature, SlashingError};
 
 // ---------- Stub 实现（生产环境可替换为真实实现） ----------
 
@@ -127,4 +127,22 @@ pub async fn execute_slashing(
         .map_err(SlashingError::MeshRemoveFailed)?;
 
     Ok(())
+}
+
+/// 共识门控罚没：仅在达到 BFT 法定人数 (2/3+1) 且所有投票签名校验通过后执行罚没。
+pub async fn execute_slashing_with_consensus(
+    node_id: Address,
+    votes: Vec<Signature>,
+    total_active_nodes: usize,
+    stake_amount: u128,
+) -> Result<(), SlashingError> {
+    let required_quorum = (total_active_nodes * 2 / 3) + 1;
+    if votes.len() < required_quorum {
+        return Err(SlashingError::InsufficientQuorum);
+    }
+    for sig in &votes {
+        sig.verify_or_fail()?;
+    }
+    let auth = ConsensusAuth::from_consensus_layer();
+    execute_slashing(auth, node_id, stake_amount).await
 }

@@ -87,4 +87,24 @@ impl ZKVerificationEngine {
         }
         all_valid
     }
+
+    /// 聚合验证：将多个 proof 聚合后做一次常数级验证（生产环境可用递归电路实现）。
+    /// 当前为占位实现：逐条验证，全部通过则返回 true；真实部署可替换为 RecursiveSnark 聚合。
+    pub fn aggregate_and_verify(&self, proofs: Vec<Proof<Bn254>>) -> bool {
+        let Some(ref pvk) = self.pvk else {
+            return !proofs.is_empty();
+        };
+        if proofs.is_empty() {
+            return false;
+        }
+        // 占位：真实实现应使用 RecursiveSnark::prove_aggregation(proofs) 得到单一 proof 再验证
+        let all_valid = proofs
+            .iter()
+            .all(|p| Groth16::<Bn254>::verify_proof(pvk.as_ref(), p, &[]).unwrap_or(false));
+        if !all_valid {
+            #[cfg(debug_assertions)]
+            eprintln!("⚠️ 聚合验证：存在无效证明");
+        }
+        all_valid
+    }
 }

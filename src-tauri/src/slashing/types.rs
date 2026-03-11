@@ -10,11 +10,30 @@ impl std::fmt::Display for Address {
     }
 }
 
+/// 共识投票签名（占位：生产环境为 BFT 节点对罚没决议的签名）
+#[derive(Clone)]
+pub struct Signature(pub Vec<u8>);
+
+impl Signature {
+    /// 校验签名真实性，失败返回 SlashingError
+    pub fn verify_or_fail(&self) -> Result<(), SlashingError> {
+        // 占位：生产环境应校验节点公钥与消息摘要
+        if self.0.is_empty() {
+            return Err(SlashingError::InvalidVoteSignature);
+        }
+        Ok(())
+    }
+}
+
 /// 罚没流程可能出现的错误
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SlashingError {
     /// 调用方未持有共识层鉴权，无权执行罚没
     Unauthorized,
+    /// 投票人数未达到 BFT 法定人数 (2/3+1)
+    InsufficientQuorum,
+    /// 投票签名校验失败
+    InvalidVoteSignature,
     /// 节点已处于冻结期，不可重复罚没
     AlreadyFrozen,
     /// 节点未在恶意记录中，无需罚没
@@ -31,6 +50,8 @@ impl std::fmt::Display for SlashingError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             SlashingError::Unauthorized => write!(f, "unauthorized: only consensus layer may slash"),
+            SlashingError::InsufficientQuorum => write!(f, "insufficient quorum: need 2/3+1 votes"),
+            SlashingError::InvalidVoteSignature => write!(f, "invalid vote signature"),
             SlashingError::AlreadyFrozen => write!(f, "node already in freeze period"),
             SlashingError::NotMalicious => write!(f, "node not marked malicious"),
             SlashingError::VaultError(s) => write!(f, "vault error: {}", s),

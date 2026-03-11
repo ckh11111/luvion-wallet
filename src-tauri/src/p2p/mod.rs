@@ -56,6 +56,34 @@ pub async fn check_shard_consensus() -> Result<(), String> {
 #[derive(Debug)]
 pub struct MPCError(pub String);
 
+/// 节点标识（与网格/链上一致）
+#[derive(Clone)]
+pub struct NodeID(pub [u8; 20]);
+
+/// 裂脑防御：只有活跃节点数 ≥ 门限才发起签名轮次
+const TOTAL_NODES: usize = 18;
+const QUORUM_THRESHOLD: usize = 10; // 必须 > 50%
+
+/// 发起签名轮次前检查活跃节点数，不足则触发裂脑保护并拒绝签名
+pub async fn initiate_signature_round(active_nodes: Vec<NodeID>) -> Result<(), MPCError> {
+    if active_nodes.len() < QUORUM_THRESHOLD {
+        eprintln!(
+            "⚠️ 网络活跃度不足 ({} < {})，协议进入保护性自锁模式",
+            active_nodes.len(),
+            QUORUM_THRESHOLD
+        );
+        return Err(MPCError(
+            "split-brain protection triggered: insufficient active nodes".into(),
+        ));
+    }
+    perform_mpc_signing(active_nodes).await
+}
+
+/// 执行 MPC 签名（占位：实际接入门限签名协议）
+async fn perform_mpc_signing(_active_nodes: Vec<NodeID>) -> Result<(), MPCError> {
+    Ok(())
+}
+
 /// 分片预取：预连接 18 个分片，多路复用降低握手延迟
 pub struct Mesh {
     pub shards: Vec<ShardHandle>,

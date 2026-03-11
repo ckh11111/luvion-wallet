@@ -3,7 +3,6 @@ pub mod core;
 pub mod zk_proof_system;
 
 pub use core::{
-    report_malicious_node, run_zk_verification_middleware, ShardClaim, ZKMiddlewareError,
+    run_zk_verification_middleware, ShardClaim,
 };
 pub use zk_proof_system::ZKVerificationEngine;
-pub use zk_proof_system::Fr;

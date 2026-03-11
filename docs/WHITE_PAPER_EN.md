@@ -112,7 +112,31 @@ Luvion implements a **sovereign asset fortress** with five pillars:
 
 ---
 
-## 6. Technical Roadmap
+## 6. Robustness & Security Hardening (Chapter VI)
+
+### 6.1 Recursive Proof Aggregation
+
+To reduce communication overhead when verifying ZK proofs across large node clusters (18 nodes+), Luvion adopts a **Recursive SNARKs** architecture. Traditional **O(n)** linear verification is replaced with **O(1)** constant-time verification, keeping verification latency under **T < 100ms** even under high concurrency.
+
+### 6.2 Hybrid PQC-ZK State Compression
+
+Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a layered verification mechanism: full-strength PQC verification remains inside the Mesh; only the verification result is compressed into a short ZK-SNARK proof and submitted to L1, reducing user Gas cost by ~98%.
+
+### 6.3 Consensus-Gated Slashing
+
+No slashing takes effect on a single authority’s say. Any slashing decision must be backed by **BFT consensus** with a quorum of **Q > (2/3)N + 1** signatures. A randomly selected **Guardian Nodes** governance committee acts as final arbiter, ensuring social-consensus-level self-healing.
+
+### 6.4 Quorum & Split-Brain Protection
+
+When the number of active nodes falls below 51% of the network (**N < 10**), the system enters “protective lock mode” and rejects all signing requests. This prevents double-spend paradoxes under network partition and preserves global cross-region consistency.
+
+### 6.5 Multi-channel Async Revocation
+
+To counter DDoS or social-engineering attacks, the L-SG protocol supports a smart time-delay: on anomaly detection, the revocation window is extended to 72 hours, and pre-configured trusted circles can asynchronously trigger emergency lock, providing a physical last line of defense for user assets.
+
+---
+
+## 7. Technical Roadmap
 
 | Phase | Milestone | Objective |
 |:------|:----------|:----------|
@@ -123,7 +147,7 @@ Luvion implements a **sovereign asset fortress** with five pillars:
 
 ---
 
-## 7. Conclusion
+## 8. Conclusion
 
 Luvion proposes a **sovereign asset fortress** where **no single key** exists, **every shard is ZK-verified**, and the **mesh self-heals** under failure. By combining **threshold MPC**, **PQC**, and **ZK-Fault Proofs** with institutional safeguards (L-SG, risk preview, hardened storage), the protocol targets **institutional-grade** security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.
 

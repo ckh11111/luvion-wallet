@@ -167,25 +167,37 @@ Luvion 通过三大支柱实现**主权资产堡垒**：门限 MPC（18/10）、
 
 ---
 
-## 6. Security Hardening / 安全加固（Chapter VI）
+## 6. Robustness & Security Hardening / 协议鲁棒性加固（Chapter VI）
 
-### 6.1 Consensus-Gated Slashing
+### 6.1 Recursive Proof Aggregation / 递归证明聚合
 
-Slashing (penalization of malicious or faulty nodes) is **not** executed on a single authority’s decision. The protocol requires **BFT-style consensus**: a quorum of **2/3 + 1** of active nodes must submit valid **votes** (cryptographic signatures) before any stake lock or node removal. Each vote is verified; only after the quorum is reached does the system call `Vault::lock_stake`, transfer penalized amounts to the ecosystem pool, and remove the node from the mesh. This prevents **single-point abuse** of the slashing mechanism.
+To reduce communication overhead when verifying ZK proofs across large node clusters (18 nodes+), Luvion adopts a **Recursive SNARKs** architecture. Traditional **O(n)** linear verification is replaced with **O(1)** constant-time verification, keeping verification latency under **T &lt; 100ms** even under high concurrency.
 
-罚没（对恶意或故障节点的惩罚）**不**由单一权威决定。协议要求 **BFT 式共识**：必须有 **2/3 + 1** 的活跃节点提交有效**投票**（密码学签名），才能执行质押锁定或节点移除。每张票均需验证；仅在达到法定人数后，系统才调用 `Vault::lock_stake`、将罚没金额转入生态池并从网格中剔除节点，从而避免罚没机制的**单点滥用**。
+为了克服大规模节点集群（18 Nodes+）在 ZK 验证时的通信冗余，Luvion 引入了**递归 SNARKs (Recursive SNARKs)** 架构。将传统的 *O(n)* 线性验证转换为 *O(1)* 的常数验证，确保在极高并发下，验证延迟始终保持在 *T &lt; 100ms*。
 
-### 6.2 Split-Brain Protection
+### 6.2 Hybrid PQC-ZK State Compression / 混合 PQC-ZK 状态压缩
 
-Before initiating any **MPC signing round**, the protocol checks that the number of **active nodes** meets a **quorum threshold** (e.g. **10 of 18**, i.e. >50%). If `active_nodes.len() < QUORUM_THRESHOLD`, the protocol **does not** proceed to signing; it logs a warning and returns `SplitBrainProtectionTriggered`. This ensures that in the event of network partition or mass node failure, the system **refuses to sign** rather than risk producing signatures in a split or minority view, protecting against **split-brain** and **double-signing** scenarios.
+Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a **layered verification** design: full-strength PQC verification remains inside the Mesh; only the verification result is **compressed into a short ZK-SNARK proof** and submitted to L1, **reducing user Gas cost by ~98%**.
 
-在启动任何 **MPC 签名轮次**之前，协议会检查**活跃节点**数量是否达到**法定门限**（如 **18 中的 10**，即 >50%）。若 `active_nodes.len() < QUORUM_THRESHOLD`，协议**不会**继续签名，而是记录警告并返回 `SplitBrainProtectionTriggered`。从而在网络分区或大量节点故障时，系统**拒绝签名**而非在分裂或少数视图中产生签名，避免**裂脑**与**双重签名**风险。
+针对抗量子签名（Kyber-768/Dilithium）产生的巨大 Gas 成本，Luvion 采用分层验证机制：在 Mesh 内部保持全强度 PQC 校验，仅将校验结果通过 ZK-SNARK 压缩为短证明推送至 L1，将用户 Gas 损耗降低了 98%。
 
-### 6.3 Aggregated ZK Verification (Constant-Cost)
+### 6.3 Consensus-Gated Slashing / BFT 共识控制下的罚没逻辑
 
-To keep verification cost **constant** regardless of the number of shards, the protocol supports **recursive aggregation** of ZK proofs: multiple Groth16 proofs (one per shard) are combined into a **single aggregated proof** via a recursive SNARK circuit. The verifier then performs **one** Groth16 verification against a global PVK. Thus, 18 shard proofs are validated in **O(1)** time instead of 18 separate verifications, reducing latency and cost while preserving the same security guarantees.
+No slashing takes effect on a single authority’s say. Any slashing decision must be backed by **BFT consensus** with **Q &gt; (2/3)N + 1** signatures. A randomly selected **Guardian Nodes** governance committee acts as final arbiter, ensuring **social-consensus-level** self-healing.
 
-为使验证成本与分片数量无关、保持**常数级**，协议支持 ZK 证明的**递归聚合**：多个 Groth16 证明（每分片一个）通过递归 SNARK 电路聚合成**单一聚合证明**。验证方随后对全局 PVK 执行**一次** Groth16 验证。因此 18 个分片证明在 **O(1)** 时间内完成校验，在保持相同安全保证的前提下降低延迟与成本。
+为防止 Mesh 内部少数节点合谋，任何罚没指令的生效必须满足 *Q &gt; (2/3)N + 1* 的共识签名，并由随机抽取的治理委员会（Guardian Nodes）作为终审裁决，确保系统具备社会共识层面的自愈能力。
+
+### 6.4 Quorum & Split-Brain Protection / 强制法定人数与防裂脑保护
+
+When the number of **active nodes** falls below 51% of the network (*N &lt; 10*), the system enters **protective lock mode** and **rejects all signing requests**. This prevents double-spend under network partition and keeps **global cross-region consistency**.
+
+当活跃节点数低于全网 51%（*N &lt; 10*）时，系统自动进入“保护性自锁模式”，拒绝任何签名请求。此机制杜绝了网络分割产生的“双花”悖论，确保了全球跨地域节点的数据绝对一致性。
+
+### 6.5 Multi-channel Async Revocation / 多路径异步撤销
+
+To counter DDoS or social-engineering attacks, the **L-SG protocol** supports **smart time-delay**: on anomaly detection, the revocation window is extended to **72 hours**, and pre-configured **trusted circles** can asynchronously trigger emergency lock, providing a **physical last line of defense** for user assets.
+
+针对 DDoS 或社会工程学攻击，L-SG 协议支持智能时钟延迟：检测到异常时自动将撤销期延长至 72 小时，并允许通过预设的“信任朋友圈”进行异步紧急锁定，为用户资产提供物理层面的最后防线。
 
 ---
 

@@ -5,5 +5,3 @@ mod types;
 mod registry;
 mod traits;
 
-pub use types::{Address, ConsensusAuth, SlashingError};
-pub use registry::{execute_slashing, ProofRegistry, Vault, LVNToken, MeshManager};
