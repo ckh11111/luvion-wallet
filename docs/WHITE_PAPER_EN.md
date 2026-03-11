@@ -120,19 +120,19 @@ To reduce communication overhead when verifying ZK proofs across large node clus
 
 ### 6.2 Hybrid PQC-ZK State Compression
 
-Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a layered verification mechanism: full-strength PQC verification remains inside the Mesh; only the verification result is compressed into a short ZK-SNARK proof and submitted to L1, reducing user Gas cost by ~98%.
+Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a **layered verification** design: full-strength PQC verification remains inside the Mesh; only the verification result is **compressed into a short ZK-SNARK proof** and submitted to L1, **reducing user Gas cost by ~98%**.
 
 ### 6.3 Consensus-Gated Slashing
 
-No slashing takes effect on a single authority’s say. Any slashing decision must be backed by **BFT consensus** with a quorum of **Q > (2/3)N + 1** signatures. A randomly selected **Guardian Nodes** governance committee acts as final arbiter, ensuring social-consensus-level self-healing.
+No slashing takes effect on a single authority's say. Any slashing decision must be backed by **BFT consensus** with **Q > (2/3)N + 1** signatures. A randomly selected **Guardian Nodes** governance committee acts as final arbiter, ensuring **social-consensus-level** self-healing.
 
 ### 6.4 Quorum & Split-Brain Protection
 
-When the number of active nodes falls below 51% of the network (**N < 10**), the system enters “protective lock mode” and rejects all signing requests. This prevents double-spend paradoxes under network partition and preserves global cross-region consistency.
+When the number of **active nodes** falls below 51% of the network (**N < 10**), the system enters **protective lock mode** and **rejects all signing requests**. This prevents double-spend under network partition and keeps **global cross-region consistency**.
 
 ### 6.5 Multi-channel Async Revocation
 
-To counter DDoS or social-engineering attacks, the L-SG protocol supports a smart time-delay: on anomaly detection, the revocation window is extended to 72 hours, and pre-configured trusted circles can asynchronously trigger emergency lock, providing a physical last line of defense for user assets.
+To counter DDoS or social-engineering attacks, the **L-SG protocol** supports **smart time-delay**: on anomaly detection, the revocation window is extended to **72 hours**, and pre-configured **trusted circles** can asynchronously trigger emergency lock, providing a **physical last line of defense** for user assets.
 
 ---
 

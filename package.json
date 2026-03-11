@@ -16,6 +16,7 @@
     "test:mesh-integrity": "node -e \"process.exit(0);\"",
     "test:full": "python3 tests/luvion_full_test_suite.py",
     "docs:pdf": "bash scripts/build-whitepaper-pdf.sh",
+    "docs:pdf:en": "bash scripts/build-whitepaper-pdf.sh --en",
     "docs:html": "node scripts/build-whitepaper-html.cjs",
     "docs:html:en": "node scripts/build-whitepaper-html.cjs --en"
   },

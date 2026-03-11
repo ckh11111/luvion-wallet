@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
-# 将白皮书 Markdown 转为 PDF
+# 将 docs/WHITE_PAPER.md 转为 docs/WHITE_PAPER.pdf；支持 --en 生成纯英文 PDF
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-SRC="docs/WHITE_PAPER.md"
+EN=""
 OUT="docs/WHITE_PAPER.pdf"
-if [[ "${1:-}" == "--en" ]]; then
-  SRC="docs/WHITE_PAPER_EN.md"
-  OUT="docs/WHITE_PAPER_EN.pdf"
-fi
+SRC="docs/WHITE_PAPER.md"
+[[ "${1:-}" == "--en" ]] && { EN=1; OUT="docs/WHITE_PAPER_EN.pdf"; SRC="docs/WHITE_PAPER_EN.md"; }
 
 if command -v pandoc &>/dev/null; then
   echo "Using pandoc..."
@@ -22,7 +20,7 @@ if command -v pandoc &>/dev/null; then
 fi
 
 echo "Pandoc not found. Trying npx md-to-pdf (first run may download Chromium, 1–2 min)..."
-if npx --yes md-to-pdf "$SRC" --output "$OUT" --pdf-options '{"format":"A4","margin":"25mm"}' 2>/dev/null; then
+if npx --yes md-to-pdf "$SRC" --pdf-options '{"format":"A4","margin":"25mm"}' 2>/dev/null; then
   echo "Done: $OUT"
   exit 0
 fi
@@ -30,6 +28,6 @@ fi
 echo "---"
 echo "PDF build failed or skipped. Alternatives:"
 echo "  1. Install pandoc + LaTeX, then run: pandoc $SRC -o $OUT"
-echo "  2. Open the corresponding HTML in a browser → Print → Save as PDF"
+echo "  2. Open docs/WHITE_PAPER*.html in a browser → Print → Save as PDF"
 echo "  3. Use any Markdown→PDF tool (e.g. VS Code extension, Typora)"
 exit 1
