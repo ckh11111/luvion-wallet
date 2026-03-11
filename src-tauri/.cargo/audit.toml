@@ -1,0 +1,26 @@
+# cargo-audit 白名单：Tauri 1 传递依赖的已知 advisory，忽略后 CI 可保持通过
+# 详见 https://rustsec.org 各 ID，中长期建议升级 Tauri v2 以脱离旧栈
+
+[advisories]
+ignore = [
+    # gtk-rs GTK3 bindings - no longer maintained
+    "RUSTSEC-2024-0413",  # atk
+    "RUSTSEC-2024-0416",  # atk-sys
+    "RUSTSEC-2024-0412",  # gdk
+    "RUSTSEC-2024-0418",  # gdk-sys
+    "RUSTSEC-2024-0411",  # gdkwayland-sys
+    "RUSTSEC-2024-0414",  # gdkx11-sys
+    "RUSTSEC-2024-0415",  # gtk
+    "RUSTSEC-2024-0420",  # gtk-sys
+    "RUSTSEC-2024-0419",  # gtk3-macros
+    # 其他 unmaintained
+    "RUSTSEC-2025-0057",  # fxhash
+    "RUSTSEC-2024-0384",  # instant
+    "RUSTSEC-2024-0370",  # proc-macro-error
+    "RUSTSEC-2025-0134",  # rustls-pemfile
+    # unsound (glib VariantStrIter)
+    "RUSTSEC-2024-0429",
+]
+# yanked (wayland-backend, wayland-sys) 来自 Tauri 传递依赖，关闭 yanked 检查
+[yanked]
+enabled = false

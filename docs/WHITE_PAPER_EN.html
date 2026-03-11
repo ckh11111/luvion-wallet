@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUVION</title>
+  <style>
+    body { font-family: Georgia, "Times New Roman", serif; max-width: 720px; margin: 2rem auto; padding: 0 2rem; line-height: 1.65; color: #1a1a1a; }
+    h1 { font-size: 1.75rem; border-bottom: 1px solid #ccc; padding-bottom: 0.4rem; }
+    h2 { font-size: 1.35rem; margin-top: 1.8rem; }
+    h3 { font-size: 1.1rem; margin-top: 1.3rem; }
+    p { margin: 0.6rem 0; text-align: justify; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.9rem; }
+    th, td { border: 1px solid #ccc; padding: 0.45rem 0.6rem; text-align: left; }
+    th { background: #f2f2f2; }
+    ul { margin: 0.4rem 0; padding-left: 1.4rem; }
+    strong { font-weight: 600; }
+    .meta { font-size: 0.85rem; color: #555; margin-bottom: 1.5rem; }
+    .print-hint { font-size: 0.9rem; color: #666; margin-top: 2rem; padding: 0.75rem; background: #f5f5f5; border-radius: 4px; }
+    @media print {
+      body { max-width: none; }
+      .print-hint { display: none; }
+      @page { margin: 2cm; size: A4; }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="content"><h1>LUVION: The MPC-Driven Sovereign Asset Fortress</h1>
+<hr>
+<h2>Abstract</h2>
+<p>Luvion is an enterprise-grade, non-custodial asset management protocol that replaces the single private-key paradigm with a <strong>distributed-compute-based sovereignty</strong> model. By combining <strong>Threshold Multi-Party Computation (MPC)</strong> with <strong>Post-Quantum Cryptography (PQC)</strong> and <strong>Zero-Knowledge Fault Proofs (ZK-Fault Proofs)</strong>, Luvion eliminates single points of failure, hardens against future quantum adversaries, and provides verifiable integrity of every signature shard without revealing secret material. A <strong>self-healing node mesh</strong> with proactive resharing and ZK-verified shard claims sets a new standard for institutional-grade digital asset security.</p>
+<hr>
+<h2>1. Introduction</h2>
+<h3>1.1 Motivation</h3>
+<p>Digital asset custody today is dominated by <strong>single-point-of-failure</strong> architectures: a single private key, or a small set of keys, controls unbounded value. Compromise of that key—through malware, social engineering, or future cryptanalytic advances—results in total loss. Institutions and high-net-worth users require a <strong>security paradigm shift</strong>: from &quot;who holds the key&quot; to &quot;how the key is computed and verified.&quot;</p>
+<h3>1.2 Design Goals</h3>
+<ul>
+<li><strong>No single key material</strong>: No node (including the user&#39;s host) ever possesses a full signing key.</li>
+<li><strong>Quantum resistance</strong>: Primary authorization layer resilient to Shor-capable adversaries (e.g. NIST-standardized PQC).</li>
+<li><strong>Verifiable shard integrity</strong>: Each signature shard is accompanied by a zero-knowledge proof of correct computation (ZK-Fault Proofs).</li>
+<li><strong>Resilience and self-healing</strong>: Node churn and network partitions trigger automatic resharing and consensus recovery.</li>
+<li><strong>Institutional safeguards</strong>: Time-locked recovery (L-SG), risk-preview engines, and hardware-backed local hardening when the mesh degrades.</li>
+</ul>
+<hr>
+<h2>2. Problem Statement</h2>
+<h3>2.1 Single Point of Failure</h3>
+<p>Traditional wallets and many institutional custodians rely on <strong>monolithic key storage</strong>. The private key exists in full at least at one location (HSM, enclave, or hot wallet). Exfiltration of that key implies <strong>total compromise</strong>. Threshold schemes that merely split a key into <em>n</em> shares still suffer from: (i) reconstruction at signing time (creating a transient full key), and (ii) lack of cryptographic proof that each share was computed correctly within the protocol.</p>
+<h3>2.2 Quantum Threat</h3>
+<p><strong>Shor&#39;s algorithm</strong> (and variants) threaten all widely deployed <strong>elliptic-curve and RSA-based</strong> cryptography. Once large-scale quantum computers exist, current key agreement and digital signatures become insecure. <strong>Post-quantum migration</strong> must be designed into the authorization and key-derivation layers from the outset, not retrofitted.</p>
+<h3>2.3 Trust and Verifiability</h3>
+<p>In a distributed signing system, <strong>malicious or faulty nodes</strong> may submit invalid shards. Without cryptographic verification, the coordinator cannot distinguish honest computation from forgery. <strong>Zero-knowledge proofs</strong> allow the network to verify that each shard was produced by a valid circuit execution—without revealing the shard&#39;s secret content—enabling <strong>fault isolation</strong> and <strong>malicious-node reporting</strong>.</p>
+<hr>
+<h2>3. Solution Overview</h2>
+<p>Luvion implements a <strong>sovereign asset fortress</strong> with five pillars:</p>
+<ol>
+<li><p><strong>Threshold MPC (18/10)</strong><br>The &quot;key&quot; is never materialized. Signing requires a <strong>quorum of 10 from 18</strong> geographically and logically distributed nodes. No single node (including the user device) holds a full key; reconstruction is performed only in a <strong>secure multi-party protocol</strong> that outputs a signature, not a key.</p>
+</li>
+<li><p><strong>Post-Quantum Hardening (PQC)</strong><br>The primary authorization and key-establishment layer uses <strong>NIST-standardized post-quantum primitives</strong> (e.g. <strong>Kyber-768</strong> for KEM). This ensures that even if an adversary gains classical access to the system, future quantum capability cannot retroactively break the authorization design.</p>
+</li>
+<li><p><strong>ZK-Fault Proofs</strong><br>Every signature shard submitted to the coordinator is accompanied by a <strong>Groth16 ZK-SNARK proof</strong> over a fixed circuit (e.g. on <strong>Bn254</strong>). The verifier checks the proof and public inputs; failure triggers <strong>malicious-node reporting</strong> and exclusion from the signing set. Thus, <strong>shard integrity</strong> is enforced without exposing secret material.</p>
+</li>
+<li><p><strong>Self-Healing Mesh</strong><br>A <strong>heartbeat monitor</strong> periodically scans the 18-node mesh. When a node is detected offline or unresponsive, the protocol triggers <strong>proactive resharing</strong> so that the effective threshold remains satisfiable with the live set. Combined with P2P discovery (e.g. <strong>Kademlia</strong>) and overlay broadcast (e.g. <strong>Gossipsub</strong>), the mesh maintains liveness and consistency.</p>
+</li>
+<li><p><strong>Institutional Safeguards</strong><br><strong>L-SG (SafeGuard™)</strong> provides time-locked, physical-seed recovery (e.g. QR-code shards). A <strong>risk-preview engine</strong> performs real-time transaction simulation to block high-risk contract interactions. When the number of active peers falls below the threshold, <strong>hardened local storage</strong> (e.g. TPM or Secure Enclave) is used to re-encrypt local shard material.</p>
+</li>
+</ol>
+<hr>
+<h2>4. Technical Architecture</h2>
+<h3>4.1 Threshold MPC and Sharding</h3>
+<ul>
+<li><strong>Model</strong>: <strong>18 nodes</strong>, <strong>threshold 10</strong> (18/10). A valid signature is produced only when at least 10 nodes contribute correct partial signatures (or shards) to a <strong>threshold signature scheme</strong>.</li>
+<li><strong>Key material</strong>: The &quot;master&quot; secret is split using <strong>Shamir-style secret sharing</strong> (or equivalent) into 18 shards. Each shard is stored at a distinct node; <strong>no node</strong> has access to more than one shard in the intended deployment.</li>
+<li><strong>Signing path</strong>: The protocol <strong>never reconstructs</strong> the full private key. Signing is performed via <strong>multi-party computation</strong>: each node computes a partial signature over the message; a <strong>combiner</strong> (or distributed protocol) produces the final signature from at least 10 valid partials.</li>
+<li><strong>BIP44 / HD</strong>: Shard-derived material supports <strong>path-based derivation</strong> (e.g. BIP44) so that different chains (e.g. Ethereum, Solana) can be addressed from the same MPC root without re-sharing.</li>
+</ul>
+<h3>4.2 Post-Quantum Cryptography (PQC)</h3>
+<ul>
+<li><strong>Role</strong>: The <strong>primary authorization layer</strong> (e.g. user authentication, session establishment, or key encapsulation for sensitive metadata) uses <strong>post-quantum primitives</strong>.</li>
+<li><strong>Choice</strong>: <strong>Kyber-768</strong> (NIST PQC standardization) is designated for <strong>key encapsulation (KEM)</strong>. This provides <strong>IND-CCA2</strong> security and is believed secure against both classical and known quantum attacks.</li>
+<li><strong>Integration</strong>: PQC keys may protect the distribution of shard material, attestation channels, or recovery seeds. The design ensures that <strong>quantum-safe</strong> and <strong>classical</strong> components are clearly separated so that migration and auditing are straightforward.</li>
+</ul>
+<h3>4.3 ZK-Fault Proofs (Groth16)</h3>
+<ul>
+<li><strong>Objective</strong>: Ensure that every <strong>shard claim</strong> (i.e. a partial signature or commitment submitted by a node) is <strong>cryptographically verified</strong> to have been produced by the correct circuit and inputs, <strong>without revealing</strong> the shard&#39;s secret value.</li>
+<li><strong>Construction</strong>: Each node, when submitting a shard, also submits a <strong>Groth16 ZK-SNARK proof</strong> (over the <strong>Bn254</strong> curve) that attests: &quot;I know a witness (e.g. my shard and internal state) such that the prescribed circuit evaluates to the claimed public output.&quot;</li>
+<li><strong>Verification</strong>: The coordinator (or any verifier) holds a <strong>Prepared Verifying Key (PVK)</strong>. For each shard claim, it runs <strong>Groth16::verify_proof(pvk, proof, public_inputs)</strong>. If verification fails, the node is <strong>reported as malicious</strong> (<code>report_malicious_node</code>) and excluded; the protocol may trigger <strong>resharing</strong> or replacement.</li>
+<li><strong>Middleware</strong>: The ZK check is implemented as <strong>middleware</strong> in the <strong>prepare_signing_shards</strong> pipeline: before any signing round, the set of shard claims is verified; only then does the mesh proceed to <strong>warm_up_connection</strong> and signing. This enforces <strong>fail-fast</strong> semantics and prevents faulty or adversarial shards from entering the threshold combination.</li>
+</ul>
+<h3>4.4 Self-Healing Mesh and Proactive Resharing</h3>
+<ul>
+<li><strong>Topology</strong>: 18 nodes form a <strong>P2P mesh</strong> with discovery via <strong>Kademlia</strong> (DHT) and broadcast via <strong>Gossipsub</strong> (or equivalent). Shard updates and resharing messages are propagated through this overlay.</li>
+<li><strong>Heartbeat</strong>: A <strong>heartbeat monitor</strong> runs at a fixed interval (e.g. 5 seconds). It <strong>scans</strong> the mesh (e.g. <code>scan_node_mesh</code>) and marks nodes that do not respond as <strong>offline</strong>.</li>
+<li><strong>Proactive resharing</strong>: For each node detected <strong>offline</strong>, the protocol invokes <strong>trigger_shard_resharing(node_id)</strong>. This initiates a <strong>proactive resharing</strong> protocol so that the remaining live nodes obtain new shards and the threshold (10) remains achievable without the failed node. No full key is ever reconstructed; resharing is done in a distributed manner.</li>
+<li><strong>Consensus and liveness</strong>: The system periodically <strong>checks shard consensus</strong> (<code>check_shard_consensus</code>) and <strong>redistributes shards</strong> (<code>redistribute_shards</code>) after resharing. This keeps the mesh in a <strong>consistent and available</strong> state despite churn.</li>
+</ul>
+<h3>4.5 Institutional Safeguards</h3>
+<ul>
+<li><strong>L-SG (SafeGuard™) Recovery</strong>: A <strong>time-locked recovery</strong> protocol with <strong>physical seed shards</strong> (e.g. QR-code printed or engraved). Recovery requires both the time lock to expire and the physical shards to be combined in a controlled environment. This mitigates remote coercion and single-device loss.</li>
+<li><strong>Risk-Preview Engine</strong>: Before any transaction is broadcast, a <strong>sandboxed simulation</strong> (e.g. <code>cmd_simulate_transaction</code>) runs. High-risk patterns (e.g. unlimited approvals, unknown contracts) are flagged; the user must explicitly confirm or abort. This reduces <strong>approval and phishing</strong> risks.</li>
+<li><strong>Hardened Local Storage</strong>: When the number of <strong>active peers</strong> drops below the <strong>threshold</strong> (e.g. 10), the client triggers <strong>hardened_local_storage</strong>: local shard material is <strong>re-encrypted</strong> using <strong>TPM</strong> or <strong>Secure Enclave</strong> (or equivalent). This limits exposure if the mesh is temporarily degraded.</li>
+<li><strong>Biometric and 2FA</strong>: Critical actions (e.g. withdrawal) require <strong>biometric authentication</strong> (e.g. Touch ID / Face ID) and optional <strong>2FA</strong>, ensuring that even with device access, signing requires user presence.</li>
+</ul>
+<hr>
+<h2>5. Security Model and Threat Analysis</h2>
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Single node compromise</strong></td>
+<td>No full key; threshold 10/18; ZK verification rejects invalid shards.</td>
+</tr>
+<tr>
+<td><strong>Quantum adversary</strong></td>
+<td>PQC (Kyber-768) in authorization; design allows replacement of classical components.</td>
+</tr>
+<tr>
+<td><strong>Malicious or faulty shard</strong></td>
+<td>Groth16 ZK-Fault Proof per shard; failure → <code>report_malicious_node</code> and exclusion.</td>
+</tr>
+<tr>
+<td><strong>Network partition / node churn</strong></td>
+<td>Heartbeat + proactive resharing; mesh self-heals; hardened storage when below threshold.</td>
+</tr>
+<tr>
+<td><strong>Phishing / approval abuse</strong></td>
+<td>Risk-preview engine; sandboxed simulation; explicit user confirmation.</td>
+</tr>
+<tr>
+<td><strong>Device loss</strong></td>
+<td>L-SG time-lock + physical shards; no single device holds recoverable full key.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>6. Technical Roadmap</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Phase</th>
+<th align="left">Milestone</th>
+<th align="left">Objective</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>I</strong></td>
+<td align="left"><strong>Core MPC</strong></td>
+<td align="left">18-node threshold implementation; Shamir/SSS; no full-key materialization.</td>
+</tr>
+<tr>
+<td align="left"><strong>II</strong></td>
+<td align="left"><strong>PQC Hardening</strong></td>
+<td align="left">Kyber-768 integration in authorization and KEM; NIST alignment.</td>
+</tr>
+<tr>
+<td align="left"><strong>III</strong></td>
+<td align="left"><strong>ZK-Fault Proofs &amp; Audit</strong></td>
+<td align="left">Groth16 (Bn254) verification in <code>prepare_signing_shards</code>; third-party code audit; ZKP circuit audit.</td>
+</tr>
+<tr>
+<td align="left"><strong>IV</strong></td>
+<td align="left"><strong>Self-Healing &amp; Production</strong></td>
+<td align="left">Heartbeat monitor; proactive resharing; Kademlia/Gossipsub; hardened storage and L-SG.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>7. Conclusion</h2>
+<p>Luvion proposes a <strong>sovereign asset fortress</strong> where <strong>no single key</strong> exists, <strong>every shard is ZK-verified</strong>, and the <strong>mesh self-heals</strong> under failure. By combining <strong>threshold MPC</strong>, <strong>PQC</strong>, and <strong>ZK-Fault Proofs</strong> with institutional safeguards (L-SG, risk preview, hardened storage), the protocol targets <strong>institutional-grade</strong> security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.</p>
+<hr>
+<h2>References</h2>
+<ol>
+<li>Groth, J. (2016). On the Size of Pairing-based Non-interactive Arguments. EUROCRYPT 2016.  </li>
+<li>NIST. Post-Quantum Cryptography Standardization. (e.g. Kyber, ML-KEM).  </li>
+<li>Shamir, A. (1979). How to Share a Secret. Communications of the ACM.  </li>
+<li>Boneh, D., et al. Threshold Signatures. (Relevant threshold ECDSA/MPC literature.)  </li>
+<li>libp2p. Kademlia, Gossipsub. (P2P overlay and broadcast.)</li>
+</ol>
+<hr>
+<p><em>Document classification: Draft for institutional and investment review. Not a commitment to a specific implementation or timeline.</em></p>
+</div>
+  <p class="print-hint">To save as PDF: <strong>File → Print → Save as PDF</strong>. To remove date/title from each page: in the Print dialog open <strong>More settings</strong> (更多设置) and turn off <strong>Headers and footers</strong> (页眉和页脚).</p>
+</body>
+</html>

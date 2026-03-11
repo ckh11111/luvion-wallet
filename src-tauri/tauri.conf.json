@@ -1,0 +1,43 @@
+{
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devPath": "http://localhost:1421",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "Luvion Wallet",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": true
+    },
+    "bundle": {
+      "active": true,
+      "targets": "app",
+      "identifier": "com.luvion.wallet",
+      "icon": [],
+      "category": "Finance",
+      "copyright": "Luvion Security",
+      "shortDescription": "Post-Quantum Secure Multi-Chain Wallet",
+      "externalBin": [],
+      "macOS": {
+        "entitlements": "Entitlements.plist"
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "Luvion Wallet",
+        "width": 1000,
+        "height": 700,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ]
+  }
+}
+

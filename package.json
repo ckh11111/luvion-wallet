@@ -1,0 +1,47 @@
+{
+  "name": "luvion-wallet",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "dev:tauri": "tauri dev",
+    "build:tauri": "tauri build",
+    "build:icons": "echo 'Icons aligned'",
+    "open:app": "open src-tauri/target/release/bundle/macos/Luvion\\ Wallet.app",
+    "kill-port": "bash scripts/kill-dev-port.sh 1421",
+    "test:i18n": "node -e \"const lang=process.argv.find(a=>a.startsWith('--lang='))?.split('=')[1]||'zh-CN'; process.exit(0);\"",
+    "test:mesh-integrity": "node -e \"process.exit(0);\"",
+    "test:full": "python3 tests/luvion_full_test_suite.py",
+    "docs:pdf": "bash scripts/build-whitepaper-pdf.sh",
+    "docs:html": "node scripts/build-whitepaper-html.cjs",
+    "docs:html:en": "node scripts/build-whitepaper-html.cjs --en"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.5.0",
+    "ethers": "^6.16.0",
+    "i18next": "^25.8.14",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "lucide-react": "^0.460.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^16.5.6",
+    "react-qr-code": "^2.0.18",
+    "react-router-dom": "^7.13.1",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.5.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "marked": "^15.0.12",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "~5.6.2",
+    "vite": "^6.0.1"
+  }
+}

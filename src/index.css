@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  background-color: #1a1a1a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.metal-chassis {
+  background: linear-gradient(135deg, #e6e6e6 0%, #b3b3b3 50%, #999999 100%);
+  box-shadow: 
+    inset 2px 2px 3px rgba(255,255,255,0.8),
+    inset -2px -2px 5px rgba(0,0,0,0.3),
+    0 20px 50px rgba(0,0,0,0.8);
+  position: relative;
+}
+
+.metal-inset {
+  background: linear-gradient(to bottom, #cfcfcf, #e8e8e8);
+  box-shadow: 
+    inset 3px 3px 6px rgba(0,0,0,0.3),
+    inset -3px -3px 6px rgba(255,255,255,0.8),
+    0 1px 1px rgba(255,255,255,0.5);
+}
+
+.metal-btn {
+  background: linear-gradient(to bottom, #f0f0f0, #c8c8c8);
+  box-shadow: 
+    2px 2px 5px rgba(0,0,0,0.2),
+    -2px -2px 5px rgba(255,255,255,0.9),
+    inset 1px 1px 1px rgba(255,255,255,1);
+  border: 1px solid #a0a0a0;
+  transition: all 0.1s ease;
+}
+
+.metal-btn:active {
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3), inset -2px -2px 5px rgba(255,255,255,0.5);
+  background: linear-gradient(to bottom, #d8d8d8, #e8e8e8);
+}
+
+.glow-border {
+  border: 2px solid #39ff14;
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.4), inset 0 0 5px rgba(57, 255, 20, 0.2);
+}
+
+.screw {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d0d0d0, #909090);
+  box-shadow: inset 1px 1px 2px rgba(255,255,255,0.8), inset -1px -1px 2px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.5);
+  position: absolute;
+}
+.screw::after {
+  content: ''; position: absolute; top: 5px; left: 2px; right: 2px; height: 1.5px;
+  background: #555; transform: rotate(45deg); box-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
