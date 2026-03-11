@@ -140,13 +140,13 @@
 <h3>6.1 Recursive Proof Aggregation</h3>
 <p>To reduce communication overhead when verifying ZK proofs across large node clusters (18 nodes+), Luvion adopts a <strong>Recursive SNARKs</strong> architecture. Traditional <strong>O(n)</strong> linear verification is replaced with <strong>O(1)</strong> constant-time verification, keeping verification latency under <strong>T &lt; 100ms</strong> even under high concurrency.</p>
 <h3>6.2 Hybrid PQC-ZK State Compression</h3>
-<p>Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a layered verification mechanism: full-strength PQC verification remains inside the Mesh; only the verification result is compressed into a short ZK-SNARK proof and submitted to L1, reducing user Gas cost by ~98%.</p>
+<p>Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a <strong>layered verification</strong> design: full-strength PQC verification remains inside the Mesh; only the verification result is <strong>compressed into a short ZK-SNARK proof</strong> and submitted to L1, <strong>reducing user Gas cost by ~98%</strong>.</p>
 <h3>6.3 Consensus-Gated Slashing</h3>
-<p>No slashing takes effect on a single authority’s say. Any slashing decision must be backed by <strong>BFT consensus</strong> with a quorum of <strong>Q &gt; (2/3)N + 1</strong> signatures. A randomly selected <strong>Guardian Nodes</strong> governance committee acts as final arbiter, ensuring social-consensus-level self-healing.</p>
+<p>No slashing takes effect on a single authority&#39;s say. Any slashing decision must be backed by <strong>BFT consensus</strong> with <strong>Q &gt; (2/3)N + 1</strong> signatures. A randomly selected <strong>Guardian Nodes</strong> governance committee acts as final arbiter, ensuring <strong>social-consensus-level</strong> self-healing.</p>
 <h3>6.4 Quorum &amp; Split-Brain Protection</h3>
-<p>When the number of active nodes falls below 51% of the network (<strong>N &lt; 10</strong>), the system enters “protective lock mode” and rejects all signing requests. This prevents double-spend paradoxes under network partition and preserves global cross-region consistency.</p>
+<p>When the number of <strong>active nodes</strong> falls below 51% of the network (<strong>N &lt; 10</strong>), the system enters <strong>protective lock mode</strong> and <strong>rejects all signing requests</strong>. This prevents double-spend under network partition and keeps <strong>global cross-region consistency</strong>.</p>
 <h3>6.5 Multi-channel Async Revocation</h3>
-<p>To counter DDoS or social-engineering attacks, the L-SG protocol supports a smart time-delay: on anomaly detection, the revocation window is extended to 72 hours, and pre-configured trusted circles can asynchronously trigger emergency lock, providing a physical last line of defense for user assets.</p>
+<p>To counter DDoS or social-engineering attacks, the <strong>L-SG protocol</strong> supports <strong>smart time-delay</strong>: on anomaly detection, the revocation window is extended to <strong>72 hours</strong>, and pre-configured <strong>trusted circles</strong> can asynchronously trigger emergency lock, providing a <strong>physical last line of defense</strong> for user assets.</p>
 <hr>
 <h2>7. Technical Roadmap</h2>
 <table>

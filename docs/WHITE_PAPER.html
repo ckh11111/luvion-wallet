@@ -17,7 +17,11 @@
     strong { font-weight: 600; }
     .meta { font-size: 0.85rem; color: #555; margin-bottom: 1.5rem; }
     .print-hint { font-size: 0.9rem; color: #666; margin-top: 2rem; padding: 0.75rem; background: #f5f5f5; border-radius: 4px; }
-    @media print { body { max-width: none; } .print-hint { display: none; } }
+    @media print {
+      body { max-width: none; }
+      .print-hint { display: none; }
+      @page { margin: 2cm; size: A4; }
+    }
   </style>
 </head>
 <body>
@@ -244,7 +248,24 @@
 </tr>
 </tbody></table>
 <hr>
-<h2>6. Technical Roadmap / 技术路线</h2>
+<h2>6. Robustness &amp; Security Hardening / 协议鲁棒性加固（Chapter VI）</h2>
+<h3>6.1 Recursive Proof Aggregation / 递归证明聚合</h3>
+<p>To reduce communication overhead when verifying ZK proofs across large node clusters (18 nodes+), Luvion adopts a <strong>Recursive SNARKs</strong> architecture. Traditional <strong>O(n)</strong> linear verification is replaced with <strong>O(1)</strong> constant-time verification, keeping verification latency under <strong>T &lt; 100ms</strong> even under high concurrency.</p>
+<p>为了克服大规模节点集群（18 Nodes+）在 ZK 验证时的通信冗余，Luvion 引入了<strong>递归 SNARKs (Recursive SNARKs)</strong> 架构。将传统的 <em>O(n)</em> 线性验证转换为 <em>O(1)</em> 的常数验证，确保在极高并发下，验证延迟始终保持在 <em>T &lt; 100ms</em>。</p>
+<h3>6.2 Hybrid PQC-ZK State Compression / 混合 PQC-ZK 状态压缩</h3>
+<p>Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a <strong>layered verification</strong> design: full-strength PQC verification remains inside the Mesh; only the verification result is <strong>compressed into a short ZK-SNARK proof</strong> and submitted to L1, <strong>reducing user Gas cost by ~98%</strong>.</p>
+<p>针对抗量子签名（Kyber-768/Dilithium）产生的巨大 Gas 成本，Luvion 采用分层验证机制：在 Mesh 内部保持全强度 PQC 校验，仅将校验结果通过 ZK-SNARK 压缩为短证明推送至 L1，将用户 Gas 损耗降低了 98%。</p>
+<h3>6.3 Consensus-Gated Slashing / BFT 共识控制下的罚没逻辑</h3>
+<p>No slashing takes effect on a single authority’s say. Any slashing decision must be backed by <strong>BFT consensus</strong> with <strong>Q &gt; (2/3)N + 1</strong> signatures. A randomly selected <strong>Guardian Nodes</strong> governance committee acts as final arbiter, ensuring <strong>social-consensus-level</strong> self-healing.</p>
+<p>为防止 Mesh 内部少数节点合谋，任何罚没指令的生效必须满足 <em>Q &gt; (2/3)N + 1</em> 的共识签名，并由随机抽取的治理委员会（Guardian Nodes）作为终审裁决，确保系统具备社会共识层面的自愈能力。</p>
+<h3>6.4 Quorum &amp; Split-Brain Protection / 强制法定人数与防裂脑保护</h3>
+<p>When the number of <strong>active nodes</strong> falls below 51% of the network (<em>N &lt; 10</em>), the system enters <strong>protective lock mode</strong> and <strong>rejects all signing requests</strong>. This prevents double-spend under network partition and keeps <strong>global cross-region consistency</strong>.</p>
+<p>当活跃节点数低于全网 51%（<em>N &lt; 10</em>）时，系统自动进入“保护性自锁模式”，拒绝任何签名请求。此机制杜绝了网络分割产生的“双花”悖论，确保了全球跨地域节点的数据绝对一致性。</p>
+<h3>6.5 Multi-channel Async Revocation / 多路径异步撤销</h3>
+<p>To counter DDoS or social-engineering attacks, the <strong>L-SG protocol</strong> supports <strong>smart time-delay</strong>: on anomaly detection, the revocation window is extended to <strong>72 hours</strong>, and pre-configured <strong>trusted circles</strong> can asynchronously trigger emergency lock, providing a <strong>physical last line of defense</strong> for user assets.</p>
+<p>针对 DDoS 或社会工程学攻击，L-SG 协议支持智能时钟延迟：检测到异常时自动将撤销期延长至 72 小时，并允许通过预设的“信任朋友圈”进行异步紧急锁定，为用户资产提供物理层面的最后防线。</p>
+<hr>
+<h2>7. Technical Roadmap / 技术路线</h2>
 <table>
 <thead>
 <tr>
@@ -304,7 +325,7 @@
 </tr>
 </tbody></table>
 <hr>
-<h2>7. Conclusion / 结论</h2>
+<h2>8. Conclusion / 结论</h2>
 <p>Luvion proposes a <strong>sovereign asset fortress</strong> where <strong>no single key</strong> exists, <strong>every shard is ZK-verified</strong>, and the <strong>mesh self-heals</strong> under failure. By combining <strong>threshold MPC</strong>, <strong>PQC</strong>, and <strong>ZK-Fault Proofs</strong> with institutional safeguards (L-SG, risk preview, hardened storage), the protocol targets <strong>institutional-grade</strong> security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.</p>
 <p>Luvion 提出一种<strong>主权资产堡垒</strong>：<strong>不存在单一密钥</strong>、<strong>每份分片经 ZK 验证</strong>、<strong>网格在故障下自愈</strong>。通过将<strong>门限 MPC</strong>、<strong>PQC</strong> 与 <strong>ZK-Fault Proofs</strong> 同机构级防护（L-SG、风险预览、加固存储）结合，协议面向<strong>机构级</strong>安全与可审计性。本白皮书为后续规范、实现与第三方审计提供技术与结构基础。</p>
 <hr>
@@ -319,6 +340,6 @@
 <hr>
 <p><em>Document classification: Draft for institutional and investment review. Not a commitment to a specific implementation or timeline.</em><br><em>文档级别：供机构与投资审查的草稿。不构成对具体实现或时间表的承诺。</em></p>
 </div>
-  <p class="print-hint">To save as PDF: <strong>File → Print → Save as PDF</strong> (or Ctrl/Cmd + P). 生成 PDF：<strong>文件 → 打印 → 另存为 PDF</strong>。</p>
+  <p class="print-hint">To save as PDF: <strong>File → Print → Save as PDF</strong>. To remove date/title from each page: in the Print dialog open <strong>More settings</strong> (更多设置) and turn off <strong>Headers and footers</strong> (页眉和页脚).</p>
 </body>
 </html>
