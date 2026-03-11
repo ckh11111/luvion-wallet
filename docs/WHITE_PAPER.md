@@ -167,7 +167,29 @@ Luvion 通过三大支柱实现**主权资产堡垒**：门限 MPC（18/10）、
 
 ---
 
-## 6. Technical Roadmap / 技术路线
+## 6. Security Hardening / 安全加固（Chapter VI）
+
+### 6.1 Consensus-Gated Slashing
+
+Slashing (penalization of malicious or faulty nodes) is **not** executed on a single authority’s decision. The protocol requires **BFT-style consensus**: a quorum of **2/3 + 1** of active nodes must submit valid **votes** (cryptographic signatures) before any stake lock or node removal. Each vote is verified; only after the quorum is reached does the system call `Vault::lock_stake`, transfer penalized amounts to the ecosystem pool, and remove the node from the mesh. This prevents **single-point abuse** of the slashing mechanism.
+
+罚没（对恶意或故障节点的惩罚）**不**由单一权威决定。协议要求 **BFT 式共识**：必须有 **2/3 + 1** 的活跃节点提交有效**投票**（密码学签名），才能执行质押锁定或节点移除。每张票均需验证；仅在达到法定人数后，系统才调用 `Vault::lock_stake`、将罚没金额转入生态池并从网格中剔除节点，从而避免罚没机制的**单点滥用**。
+
+### 6.2 Split-Brain Protection
+
+Before initiating any **MPC signing round**, the protocol checks that the number of **active nodes** meets a **quorum threshold** (e.g. **10 of 18**, i.e. >50%). If `active_nodes.len() < QUORUM_THRESHOLD`, the protocol **does not** proceed to signing; it logs a warning and returns `SplitBrainProtectionTriggered`. This ensures that in the event of network partition or mass node failure, the system **refuses to sign** rather than risk producing signatures in a split or minority view, protecting against **split-brain** and **double-signing** scenarios.
+
+在启动任何 **MPC 签名轮次**之前，协议会检查**活跃节点**数量是否达到**法定门限**（如 **18 中的 10**，即 >50%）。若 `active_nodes.len() < QUORUM_THRESHOLD`，协议**不会**继续签名，而是记录警告并返回 `SplitBrainProtectionTriggered`。从而在网络分区或大量节点故障时，系统**拒绝签名**而非在分裂或少数视图中产生签名，避免**裂脑**与**双重签名**风险。
+
+### 6.3 Aggregated ZK Verification (Constant-Cost)
+
+To keep verification cost **constant** regardless of the number of shards, the protocol supports **recursive aggregation** of ZK proofs: multiple Groth16 proofs (one per shard) are combined into a **single aggregated proof** via a recursive SNARK circuit. The verifier then performs **one** Groth16 verification against a global PVK. Thus, 18 shard proofs are validated in **O(1)** time instead of 18 separate verifications, reducing latency and cost while preserving the same security guarantees.
+
+为使验证成本与分片数量无关、保持**常数级**，协议支持 ZK 证明的**递归聚合**：多个 Groth16 证明（每分片一个）通过递归 SNARK 电路聚合成**单一聚合证明**。验证方随后对全局 PVK 执行**一次** Groth16 验证。因此 18 个分片证明在 **O(1)** 时间内完成校验，在保持相同安全保证的前提下降低延迟与成本。
+
+---
+
+## 7. Technical Roadmap / 技术路线
 
 | Phase | Milestone | Objective |
 |:------|:----------|:----------|
@@ -185,7 +207,7 @@ Luvion 通过三大支柱实现**主权资产堡垒**：门限 MPC（18/10）、
 
 ---
 
-## 7. Conclusion / 结论
+## 8. Conclusion / 结论
 
 Luvion proposes a **sovereign asset fortress** where **no single key** exists, **every shard is ZK-verified**, and the **mesh self-heals** under failure. By combining **threshold MPC**, **PQC**, and **ZK-Fault Proofs** with institutional safeguards (L-SG, risk preview, hardened storage), the protocol targets **institutional-grade** security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.
 
