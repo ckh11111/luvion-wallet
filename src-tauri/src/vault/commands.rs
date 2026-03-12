@@ -86,7 +86,8 @@ pub async fn authenticate_user() -> Result<bool, String> {
 
 #[tauri::command]
 pub async fn cmd_check_nodes() -> Result<Vec<serde_json::Value>, String> {
-    let nodes = (1..=18)
+    let n = crate::core::config::LUVION_V1.committee_size;
+    let nodes = (1..=n)
         .map(|i| {
             serde_json::json!({
                 "id": i,

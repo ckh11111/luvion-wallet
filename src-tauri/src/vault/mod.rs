@@ -20,11 +20,11 @@ pub struct VaultManager;
 
 impl VaultManager {
     pub fn check_shards_heartbeat() -> Vec<NodeStatus> {
-        (1..=18).map(|i| {
+        (1..=crate::core::config::LUVION_V1.committee_size).map(|i| {
             NodeStatus {
-                id: i,
+                id: i as u8,
                 online: i <= 12,
-                latency: if i <= 12 { 10 + i as u32 } else { 0 },
+                latency: if i <= 12 { 10u32 + i as u32 } else { 0 },
             }
         }).collect()
     }
@@ -34,7 +34,7 @@ impl VaultManager {
     }
 }
 
-/// 占位：用主密钥加密 18 分片恢复元数据，供紧急包/二维码使用
+/// 占位：用主密钥加密委员会分片恢复元数据，供紧急包/二维码使用
 pub fn encrypt_recovery_bundle() -> Result<String, String> {
     Ok("recovery_bundle_placeholder".to_string())
 }

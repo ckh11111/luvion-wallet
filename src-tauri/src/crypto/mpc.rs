@@ -32,7 +32,7 @@ pub fn mpc_reshard_blind(original_shard: &Shard, zero_poly_shard: &Shard) -> Sha
     }
 }
 
-/// 占位：10/18 节点协作签名，不还原私钥
+/// 占位：门限/委员会节点协作签名，不还原私钥（规模见 LUVION_V1）
 pub async fn sign_transaction(
     _amount: f64,
     _to_addr: String,
@@ -46,7 +46,7 @@ pub async fn finalize_distributed_signature(_tx_id: String) -> Result<String, St
     Ok("0x_final_sig".to_string())
 }
 
-/// 占位：协调 10/18 分片完成签名
+/// 占位：协调门限/委员会分片完成签名
 pub async fn coordinate_sign(_amount: f64, _address: String) -> Result<String, String> {
     Ok("0x_tx_hash".to_string())
 }

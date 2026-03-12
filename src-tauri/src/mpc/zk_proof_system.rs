@@ -66,7 +66,7 @@ impl ZKVerificationEngine {
         Groth16::<Bn254>::verify_proof(pvk.as_ref(), proof, public_inputs).unwrap_or(false)
     }
 
-    /// 批量并行校验分片证明：用 Rayon 线程池并行验证，将 18 次串行校验压缩到接近 1 次耗时
+    /// 批量并行校验分片证明：用 Rayon 线程池并行验证，将委员会规模次串行校验压缩到接近 1 次耗时
     pub fn verify_shard_claims_batch(
         &self,
         shards: Vec<(Proof<Bn254>, Vec<Vec<u8>>)>,

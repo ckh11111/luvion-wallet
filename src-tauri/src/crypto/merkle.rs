@@ -106,6 +106,7 @@ pub fn merkle_compute_root(
 
 #[cfg(test)]
 mod tests {
+    use crate::core::config::LUVION_V1;
     use super::*;
 
     #[tokio::test]
@@ -116,19 +117,21 @@ mod tests {
 
         let validator = MerkleValidator { root_hash };
         let mut total_intercepted = 0;
+        let n = LUVION_V1.committee_size;
+        let threshold = LUVION_V1.signature_threshold;
 
-        for i in 1..=18 {
-            let is_malicious = i > 10;
+        for i in 1..=n {
+            let is_malicious = i > threshold;
             let shard_data = if is_malicious {
                 b"TAMPERED_DATA"
             } else {
                 b"ORIGINAL_DATA"
             };
-            if !validator.validate_and_intercept(i, shard_data, vec![]) {
+            if !validator.validate_and_intercept(i as u8, shard_data, vec![]) {
                 total_intercepted += 1;
             }
         }
 
-        assert_eq!(total_intercepted, 8);
+        assert_eq!(total_intercepted, n - threshold);
     }
 }

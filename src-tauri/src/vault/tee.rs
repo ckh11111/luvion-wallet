@@ -1,4 +1,5 @@
 // 工业级 TEE 接口占位（实际可接入 sgx_types / SGX SDK）
+use crate::core::config::LUVION_V1;
 use super::{biometric, enclave};
 
 pub struct EnclaveManager;
@@ -16,14 +17,14 @@ impl EnclaveManager {
         Ok(decrypted)
     }
 
-    /// 占位：TEE 内用现有分片重构私钥并重新分割为 18 份
+    /// 占位：TEE 内用现有分片重构私钥并重新分割（委员会规模见 LUVION_V1）
     pub async fn reconstruct_and_reshard() -> Result<(), String> {
         Ok(())
     }
 
-    /// 占位：TEE 内盲重组，输入收集的分片，输出 18 个新加密分片
+    /// 占位：TEE 内盲重组，输入收集的分片，输出委员会规模个新加密分片
     pub fn reshard_in_enclave(_collected_shards: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
-        Ok((0..18).map(|_| vec![0u8; 32]).collect())
+        Ok((0..LUVION_V1.committee_size).map(|_| vec![0u8; 32]).collect())
     }
 
     /// 占位：生物识别通过后 TEE 吐出 Secret 用于跨链 claim

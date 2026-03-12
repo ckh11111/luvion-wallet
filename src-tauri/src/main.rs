@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 #![allow(dead_code, unused_imports, unused_variables)]
 
+mod core;
 mod crypto;
 mod epoch;
 mod mpc;

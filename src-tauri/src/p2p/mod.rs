@@ -47,7 +47,7 @@ pub async fn broadcast_shard_update(_i: u8, _shard: &[u8]) -> Result<(), String>
     Ok(())
 }
 
-/// 占位：检查 18 分片共识状态是否健康
+/// 占位：检查分片共识状态是否健康（委员会规模见 LUVION_V1）
 pub async fn check_shard_consensus() -> Result<(), String> {
     Ok(())
 }
@@ -60,17 +60,14 @@ pub struct MPCError(pub String);
 #[derive(Clone)]
 pub struct NodeID(pub [u8; 20]);
 
-/// 裂脑防御：只有活跃节点数 ≥ 门限才发起签名轮次
-const TOTAL_NODES: usize = 18;
-const QUORUM_THRESHOLD: usize = 10; // 必须 > 50%
-
 /// 发起签名轮次前检查活跃节点数，不足则触发裂脑保护并拒绝签名
 pub async fn initiate_signature_round(active_nodes: Vec<NodeID>) -> Result<(), MPCError> {
-    if active_nodes.len() < QUORUM_THRESHOLD {
+    let threshold = crate::core::config::LUVION_V1.signature_threshold;
+    if active_nodes.len() < threshold {
         eprintln!(
             "⚠️ 网络活跃度不足 ({} < {})，协议进入保护性自锁模式",
             active_nodes.len(),
-            QUORUM_THRESHOLD
+            threshold
         );
         return Err(MPCError(
             "split-brain protection triggered: insufficient active nodes".into(),
@@ -84,7 +81,7 @@ async fn perform_mpc_signing(_active_nodes: Vec<NodeID>) -> Result<(), MPCError>
     Ok(())
 }
 
-/// 分片预取：预连接 18 个分片，多路复用降低握手延迟
+/// 分片预取：预连接委员会规模个分片，多路复用降低握手延迟
 pub struct Mesh {
     pub shards: Vec<ShardHandle>,
 }
@@ -95,7 +92,7 @@ impl ShardHandle {
     pub async fn warm_up_connection(&self) {}
 }
 
-/// 为 18 个分片建立预连接，减少后续签名时的网络延迟。
+/// 为委员会分片建立预连接，减少后续签名时的网络延迟。
 /// 若提供 zk_claims，先经 Groth16 中间件校验分片声明，失败则 report_malicious_node 并返回错误。
 pub async fn prepare_signing_shards(
     node_mesh: &Mesh,

@@ -1,4 +1,5 @@
-// 心跳监测：每 5 秒扫描 18 节点，离线则触发分片动态重组
+// 心跳监测：每 5 秒扫描委员会节点，离线则触发分片动态重组（规模见 LUVION_V1）
+use crate::core::config::LUVION_V1;
 use std::time::Duration;
 use tokio::time;
 
@@ -14,12 +15,13 @@ impl HeartbeatNode {
     }
 }
 
-/// 占位：扫描 18 个节点的响应
+/// 占位：扫描委员会规模个节点的响应
 pub async fn scan_node_mesh() -> Vec<HeartbeatNode> {
-    (1..=18)
+    let n = LUVION_V1.committee_size;
+    (1..=n)
         .map(|i| HeartbeatNode {
-            id: i,
-            offline: i > 14, // 模拟 14–18 离线
+            id: i as u8,
+            offline: i > n - 5, // 模拟部分节点离线
         })
         .collect()
 }

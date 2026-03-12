@@ -5,7 +5,7 @@ use crate::p2p::NodeID;
 /// 节点状态
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NodeStatus {
-    /// 当前当值的 18 个节点
+    /// 当前当值委员会节点（规模见 LUVION_V1.committee_size）
     Active,
     /// 候补节点
     Standby,
@@ -27,8 +27,7 @@ pub struct EpochManager {
 }
 
 impl EpochManager {
-    /// 每个 Epoch 结束时，基于 VRF 重新选择节点
-    /// 使用 VRF 随机选出 18 个节点，确保过程透明且不可预测
+    /// 每个 Epoch 结束时，基于 VRF 重新选择节点（委员会规模见 LUVION_V1）
     pub fn rotate_nodes(_pool: Vec<Staker>) -> Vec<NodeID> {
         unimplemented!("VRF-based node selection logic")
     }
