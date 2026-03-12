@@ -81,6 +81,48 @@ Luvion implements a **sovereign asset fortress** with three pillars:
 
 Luvion 通过三大支柱实现**主权资产堡垒**：门限 MPC（18/10）、PQC 加固（如 Kyber-768）、Groth16 ZK-Fault Proofs、心跳驱动的自愈网格，以及 L-SG 与风险预览等机构级防护。
 
+### 3.2 Dynamic Verification Committee (DVC) / 动态验证委员会（DVC）
+
+To balance decentralization and execution efficiency, Luvion replaces a fixed committee with a **Dynamic Verification Committee (DVC)**:
+
+* **Staking pool size**: the protocol allows $N \\ge 100$ independent nodes to enter a candidate pool by staking $LVN$.
+* **Committee sampling**: at each Epoch (≈ 1 hour), the system uses a **Verifiable Random Function (VRF)** to sample **33 active nodes** from the candidate pool to form the on-duty committee.
+* **Threshold consensus**: the committee uses a $t=22,\\ n=33$ threshold signing scheme. An attacker would need to compromise 22 globally distributed, dynamically changing nodes within a single epoch—statistically infeasible.
+* **Performance target**: 33 nodes is a practical “sweet spot” for MPC communication overhead, keeping signing latency stable at $T < 200ms$ under global network conditions.
+
+为了平衡协议去中心化程度与执行效率，Luvion 弃用固定节点架构，采用**动态验证委员会（DVC）**机制：
+
+* **节点池规模**：协议允许 $N \\ge 100$ 个独立节点通过质押 $LVN$ 代币进入候补池。
+* **委员会抽取**：每个 Epoch（纪元，约 1 小时），系统通过可验证随机函数（VRF）从候补池中随机选出 **33 个活跃节点**组成当值委员会。
+* **门限共识**：采用 $t=22,\\ n=33$ 的门限签名方案。攻击者必须在单一纪元内同时攻破分布在全球各地、动态变化的 22 个节点，这在统计学上几乎不可能。
+* **性能优化**：33 个节点是 MPC 通讯开销的黄金分割点，确保在全球复杂网络环境下，签名延迟稳定在 $T < 200ms$。
+
+### 3.3 Trustless Distributed Key Generation (DKG) / 无信托分布式密钥生成（DKG）
+
+Luvion rejects any centralized private-key distribution. The protocol adopts an improved **Pedersen Verifiable Secret Sharing (VSS)**-style DKG:
+
+* **Decentralized generation**: at Genesis or during committee rotation, each node generates a local random polynomial and interacts with peers via a secret-sharing protocol.
+* **Secret shares**: the full private key $SK$ never exists in one place; it only exists as mathematical fragments held in each node’s protected memory.
+* **Public commitments**: via public commitments (and Lagrange interpolation over commitments), participants can verify the validity of peers’ contributions without revealing private shares.
+
+Luvion 拒绝任何形式的中心化私钥分发。协议采用改进的 **Pedersen 可验证秘密共享（VSS）**方案：
+
+* **去中心化生成**：在 Genesis 阶段或委员会轮换时，各节点在本地生成随机多项式，并通过秘密共享协议与其他节点交互。
+* **秘密片断（Secret Shares）**：完整私钥 $SK$ 在物理上从未存在，仅以数学碎片形式存在于各节点的加密内存中。
+* **公开承诺（Public Commitments）**：通过公开承诺与拉格朗日插值等方法，确保所有参与节点都能在不泄露私钥分片的前提下，验证其他节点数据的合法性。
+
+### 3.4 View Change & Liveness Recovery / 视图切换与活性恢复
+
+If the current 33-node committee experiences excessive delay or partial outage, the system triggers **View Change** to preserve liveness:
+
+* **Fault tolerance trigger**: if more than $f=11$ active nodes become high-latency or unresponsive, the protocol initiates View Change.
+* **Rescheduling**: the coordinator re-selects reachable nodes (still verifiable under VRF/committee rules) and re-establishes quorum to maintain service availability.
+
+若 33 个活跃节点中超过 $f=11$ 个节点出现高延迟或不可用，系统将触发**视图切换（View Change）**机制：
+
+* **触发条件**：当活跃集合出现超过 $f=11$ 的延迟/失活节点。
+* **重新调度**：重选在线节点并重建可用法定人数，保证服务高可用性（Liveness）。
+
 ---
 
 ## 4. Technical Architecture / 技术架构
@@ -165,6 +207,24 @@ Luvion 通过三大支柱实现**主权资产堡垒**：门限 MPC（18/10）、
 | **钓鱼/授权滥用** | 风险预览引擎；沙盒仿真；用户显式确认。 |
 | **设备丢失** | L-SG 时间锁 + 物理分片；单设备无法恢复完整密钥。 |
 
+### 5.2 Dynamic Staking Coefficient / 动态质押系数
+
+To deter low-cost attacks, Luvion applies a dynamic minimum staking requirement for active nodes that scales with secured value (TVL):
+
+\[
+Stake_{min} = \alpha \cdot \frac{TVL}{N}
+\]
+
+where \(\alpha\) is a security coefficient. The objective is to keep the economic cost of misbehavior consistently **above 300%** of the potential profit.
+
+为防止低成本攻击，Luvion 实施动态质押系数，使活跃节点的最低质押额度与网格保护的资产总额（TVL）动态挂钩：
+
+\[
+Stake_{min} = \alpha \cdot \frac{TVL}{N}
+\]
+
+其中 \(\alpha\) 为安全系数，目标是确保节点作恶的经济成本始终保持在潜在获利的 **300% 以上**。
+
 ---
 
 ## 6. Robustness & Security Hardening / 协议鲁棒性加固（Chapter VI）
@@ -216,6 +276,16 @@ To counter DDoS or social-engineering attacks, the **L-SG protocol** supports **
 | **II** | **PQC 加固** | Kyber-768 接入授权与 KEM；对齐 NIST。 |
 | **III** | **ZK-Fault Proofs 与审计** | Groth16（Bn254）在 prepare_signing_shards 中验证；第三方代码审计；ZKP 电路审计。 |
 | **IV** | **自愈与生产** | 心跳监控；主动重组；Kademlia/Gossipsub；加固存储与 L-SG。 |
+
+### 7.2 Protocol Evolution Roadmap / 协议演进路线图
+
+* **Phase 1 (Genesis)**: launch 18 core founding nodes to establish the security baseline.  
+* **Phase 2 (Decentralization)**: enable $LVN$ staking, expand to 100+ nodes, and activate VRF-based DVC (33-node committee).  
+* **Phase 3 (Scaling)**: introduce sharded signing to support 1800+ nodes in parallel, serving global institutional-grade custody.
+
+* **Phase 1（Genesis）**：启动 18 个核心创始节点，建立安全基准。  
+* **Phase 2（Decentralization）**：开启 $LVN$ 质押，节点扩展至 100+，正式上线 VRF 动态委员会（33 节点）。  
+* **Phase 3（Scaling）**：引入分片签名技术，支持 1800+ 节点并发协作，服务全球机构级资产。  
 
 ---
 

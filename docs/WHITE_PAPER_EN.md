@@ -61,6 +61,30 @@ Luvion implements a **sovereign asset fortress** with five pillars:
 
 ---
 
+## 3.2 Dynamic Verification Committee (DVC)
+
+To balance decentralization and execution efficiency, Luvion replaces a fixed committee with a **Dynamic Verification Committee (DVC)**:
+
+* **Staking pool size**: the protocol allows $N \\ge 100$ independent nodes to enter a candidate pool by staking $LVN$.
+* **Committee sampling**: at each Epoch (≈ 1 hour), the system uses a **Verifiable Random Function (VRF)** to sample **33 active nodes** from the candidate pool to form the on-duty committee.
+* **Threshold consensus**: the committee uses a $t=22,\\ n=33$ threshold signing scheme. An attacker would need to compromise 22 globally distributed, dynamically changing nodes within a single epoch—statistically infeasible.
+* **Performance target**: 33 nodes is a practical “sweet spot” for MPC communication overhead, keeping signing latency stable at $T < 200ms$ under global network conditions.
+
+## 3.3 Trustless Distributed Key Generation (DKG)
+
+Luvion rejects any centralized private-key distribution. The protocol adopts an improved **Pedersen Verifiable Secret Sharing (VSS)**-style DKG:
+
+* **Decentralized generation**: at Genesis or during committee rotation, each node generates a local random polynomial and interacts with peers via a secret-sharing protocol.
+* **Secret shares**: the full private key $SK$ never exists in one place; it only exists as mathematical fragments held in each node’s protected memory.
+* **Public commitments**: via public commitments (and Lagrange interpolation over commitments), participants can verify the validity of peers’ contributions without revealing private shares.
+
+## 3.4 View Change & Liveness Recovery
+
+If the current 33-node committee experiences excessive delay or partial outage, the system triggers **View Change** to preserve liveness:
+
+* **Fault tolerance trigger**: if more than $f=11$ active nodes become high-latency or unresponsive, the protocol initiates View Change.
+* **Rescheduling**: the coordinator re-selects reachable nodes (still verifiable under VRF/committee rules) and re-establishes quorum to maintain service availability.
+
 ## 4. Technical Architecture
 
 ### 4.1 Threshold MPC and Sharding
@@ -110,6 +134,16 @@ Luvion implements a **sovereign asset fortress** with five pillars:
 | **Phishing / approval abuse** | Risk-preview engine; sandboxed simulation; explicit user confirmation. |
 | **Device loss** | L-SG time-lock + physical shards; no single device holds recoverable full key. |
 
+## 5.2 Dynamic Staking Coefficient
+
+To deter low-cost attacks, Luvion applies a dynamic minimum staking requirement for active nodes that scales with secured value (TVL):
+
+\[
+Stake_{min} = \alpha \cdot \frac{TVL}{N}
+\]
+
+where \(\alpha\) is a security coefficient. The objective is to keep the economic cost of misbehavior consistently **above 300%** of the potential profit.
+
 ---
 
 ## 6. Robustness & Security Hardening (Chapter VI)
@@ -144,6 +178,12 @@ To counter DDoS or social-engineering attacks, the **L-SG protocol** supports **
 | **II** | **PQC Hardening** | Kyber-768 integration in authorization and KEM; NIST alignment. |
 | **III** | **ZK-Fault Proofs & Audit** | Groth16 (Bn254) verification in `prepare_signing_shards`; third-party code audit; ZKP circuit audit. |
 | **IV** | **Self-Healing & Production** | Heartbeat monitor; proactive resharing; Kademlia/Gossipsub; hardened storage and L-SG. |
+
+## 7.2 Protocol Evolution Roadmap
+
+* **Phase 1 (Genesis)**: launch 18 core founding nodes to establish the security baseline.  
+* **Phase 2 (Decentralization)**: enable $LVN$ staking, expand to 100+ nodes, and activate VRF-based DVC (33-node committee).  
+* **Phase 3 (Scaling)**: introduce sharded signing to support 1800+ nodes in parallel, serving global institutional-grade custody.
 
 ---
 

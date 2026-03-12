@@ -97,3 +97,17 @@ pub async fn cmd_check_nodes() -> Result<Vec<serde_json::Value>, String> {
         .collect();
     Ok(nodes)
 }
+
+/// 一行创建安全金库：owner 地址，security 等级（Standard / Institutional / Quantum-Safe），revocation 如 "24h"
+#[tauri::command]
+pub async fn cmd_create_vault(owner: String, security: String, _revocation: String) -> Result<String, String> {
+    let tier = match security.as_str() {
+        "Standard" => crate::sdk::SecurityTier::Standard,
+        "Institutional" => crate::sdk::SecurityTier::Institutional,
+        "Quantum-Safe" | "QuantumSafe" => crate::sdk::SecurityTier::QuantumSafe,
+        _ => crate::sdk::SecurityTier::Standard,
+    };
+    let addr = crate::sdk::LuvionSDK::create_vault(tier).await;
+    let _ = owner; // 后续可绑定 owner 与金库
+    Ok(addr.to_string())
+}

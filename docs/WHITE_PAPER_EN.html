@@ -66,6 +66,27 @@
 </li>
 </ol>
 <hr>
+<h2>3.2 Dynamic Verification Committee (DVC)</h2>
+<p>To balance decentralization and execution efficiency, Luvion replaces a fixed committee with a <strong>Dynamic Verification Committee (DVC)</strong>:</p>
+<ul>
+<li><strong>Staking pool size</strong>: the protocol allows $N \ge 100$ independent nodes to enter a candidate pool by staking $LVN$.</li>
+<li><strong>Committee sampling</strong>: at each Epoch (≈ 1 hour), the system uses a <strong>Verifiable Random Function (VRF)</strong> to sample <strong>33 active nodes</strong> from the candidate pool to form the on-duty committee.</li>
+<li><strong>Threshold consensus</strong>: the committee uses a $t=22,\ n=33$ threshold signing scheme. An attacker would need to compromise 22 globally distributed, dynamically changing nodes within a single epoch—statistically infeasible.</li>
+<li><strong>Performance target</strong>: 33 nodes is a practical “sweet spot” for MPC communication overhead, keeping signing latency stable at $T &lt; 200ms$ under global network conditions.</li>
+</ul>
+<h2>3.3 Trustless Distributed Key Generation (DKG)</h2>
+<p>Luvion rejects any centralized private-key distribution. The protocol adopts an improved <strong>Pedersen Verifiable Secret Sharing (VSS)</strong>-style DKG:</p>
+<ul>
+<li><strong>Decentralized generation</strong>: at Genesis or during committee rotation, each node generates a local random polynomial and interacts with peers via a secret-sharing protocol.</li>
+<li><strong>Secret shares</strong>: the full private key $SK$ never exists in one place; it only exists as mathematical fragments held in each node’s protected memory.</li>
+<li><strong>Public commitments</strong>: via public commitments (and Lagrange interpolation over commitments), participants can verify the validity of peers’ contributions without revealing private shares.</li>
+</ul>
+<h2>3.4 View Change &amp; Liveness Recovery</h2>
+<p>If the current 33-node committee experiences excessive delay or partial outage, the system triggers <strong>View Change</strong> to preserve liveness:</p>
+<ul>
+<li><strong>Fault tolerance trigger</strong>: if more than $f=11$ active nodes become high-latency or unresponsive, the protocol initiates View Change.</li>
+<li><strong>Rescheduling</strong>: the coordinator re-selects reachable nodes (still verifiable under VRF/committee rules) and re-establishes quorum to maintain service availability.</li>
+</ul>
 <h2>4. Technical Architecture</h2>
 <h3>4.1 Threshold MPC and Sharding</h3>
 <ul>
@@ -135,6 +156,12 @@
 <td>L-SG time-lock + physical shards; no single device holds recoverable full key.</td>
 </tr>
 </tbody></table>
+<h2>5.2 Dynamic Staking Coefficient</h2>
+<p>To deter low-cost attacks, Luvion applies a dynamic minimum staking requirement for active nodes that scales with secured value (TVL):</p>
+<p>[
+Stake_{min} = \alpha \cdot \frac{TVL}{N}
+]</p>
+<p>where (\alpha) is a security coefficient. The objective is to keep the economic cost of misbehavior consistently <strong>above 300%</strong> of the potential profit.</p>
 <hr>
 <h2>6. Robustness &amp; Security Hardening (Chapter VI)</h2>
 <h3>6.1 Recursive Proof Aggregation</h3>
@@ -178,6 +205,12 @@
 <td align="left">Heartbeat monitor; proactive resharing; Kademlia/Gossipsub; hardened storage and L-SG.</td>
 </tr>
 </tbody></table>
+<h2>7.2 Protocol Evolution Roadmap</h2>
+<ul>
+<li><strong>Phase 1 (Genesis)</strong>: launch 18 core founding nodes to establish the security baseline.  </li>
+<li><strong>Phase 2 (Decentralization)</strong>: enable $LVN$ staking, expand to 100+ nodes, and activate VRF-based DVC (33-node committee).  </li>
+<li><strong>Phase 3 (Scaling)</strong>: introduce sharded signing to support 1800+ nodes in parallel, serving global institutional-grade custody.</li>
+</ul>
 <hr>
 <h2>8. Conclusion</h2>
 <p>Luvion proposes a <strong>sovereign asset fortress</strong> where <strong>no single key</strong> exists, <strong>every shard is ZK-verified</strong>, and the <strong>mesh self-heals</strong> under failure. By combining <strong>threshold MPC</strong>, <strong>PQC</strong>, and <strong>ZK-Fault Proofs</strong> with institutional safeguards (L-SG, risk preview, hardened storage), the protocol targets <strong>institutional-grade</strong> security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.</p>

@@ -2,11 +2,13 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
 mod crypto;
+mod epoch;
 mod mpc;
 mod p2p;
-mod slashing;
 mod protocols;
+mod sdk;
 mod security;
+mod slashing;
 mod vault;
 
 #[tokio::main]
@@ -24,6 +26,7 @@ async fn main() {
             vault::commands::cmd_request_biometric_withdraw,
             vault::commands::cmd_secure_withdraw,
             vault::commands::cmd_generate_emergency_kit,
+            vault::commands::cmd_create_vault,
             vault::commands::authenticate_user,
             vault::commands::authenticate_biometric,
             vault::commands::start_receive_monitor,
