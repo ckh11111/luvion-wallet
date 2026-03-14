@@ -1,40 +1,4 @@
-# Rust 构建产物
-/target
-target/
-
-# 前端依赖与构建
-node_modules/
-dist/
-.vite/
-
-# Build & artifacts
-build/
-*.o
-*.so
-*.dylib
-
-# Dependencies
-node_modules/
-
-# IDE & OS
 .DS_Store
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Logs & env
-*.log
+node_modules/
+build/
 .env
-.env.local
-.env.*.local
-
-# Tauri / Rust
-src-tauri/target/
-src-tauri/.cargo-target/
-.cargo-home/
-
-# Debug / cache
-*.tsbuildinfo
-.cache/
