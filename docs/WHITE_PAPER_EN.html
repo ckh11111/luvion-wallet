@@ -27,9 +27,11 @@
 <body>
   
   <div class="content"><h1>LUVION: The MPC-Driven Sovereign Asset Fortress</h1>
+<p><strong>Technical Whitepaper (Draft)</strong></p>
 <hr>
 <h2>Abstract</h2>
-<p>Luvion is an enterprise-grade, non-custodial asset management protocol that replaces the single private-key paradigm with a <strong>distributed-compute-based sovereignty</strong> model. By combining <strong>Threshold Multi-Party Computation (MPC)</strong> with <strong>Post-Quantum Cryptography (PQC)</strong> and <strong>Zero-Knowledge Fault Proofs (ZK-Fault Proofs)</strong>, Luvion eliminates single points of failure, hardens against future quantum adversaries, and provides verifiable integrity of every signature shard without revealing secret material. A <strong>self-healing node mesh</strong> with proactive resharing and ZK-verified shard claims sets a new standard for institutional-grade digital asset security.</p>
+<p>Luvion is the world&#39;s first security middleware that integrates <strong>post-quantum algorithms</strong> with a <strong>decentralized revocation protocol</strong>. Through <strong>distributed threshold signing (MPC)</strong> and the <strong>L-SG revocation mechanism</strong>, we build a &quot;last 24 hours&quot; safety net for Web3 assets, eliminating the risk of total loss from single-point private-key failure.</p>
+<p>The protocol is an enterprise-grade, non-custodial asset layer that replaces the single private-key paradigm with a <strong>distributed-compute-based sovereignty</strong> model. By combining <strong>Threshold MPC</strong> with <strong>PQC</strong> and <strong>ZK-Fault Proofs</strong>, Luvion eliminates single points of failure, hardens against quantum adversaries, and provides verifiable integrity of every signature shard. A <strong>self-healing node mesh</strong> with proactive resharing and ZK-verified shard claims sets a new standard for institutional-grade digital asset security.</p>
 <hr>
 <h2>1. Introduction</h2>
 <h3>1.1 Motivation</h3>
@@ -48,51 +50,59 @@
 <p>Traditional wallets and many institutional custodians rely on <strong>monolithic key storage</strong>. The private key exists in full at least at one location (HSM, enclave, or hot wallet). Exfiltration of that key implies <strong>total compromise</strong>. Threshold schemes that merely split a key into <em>n</em> shares still suffer from: (i) reconstruction at signing time (creating a transient full key), and (ii) lack of cryptographic proof that each share was computed correctly within the protocol.</p>
 <h3>2.2 Quantum Threat</h3>
 <p><strong>Shor&#39;s algorithm</strong> (and variants) threaten all widely deployed <strong>elliptic-curve and RSA-based</strong> cryptography. Once large-scale quantum computers exist, current key agreement and digital signatures become insecure. <strong>Post-quantum migration</strong> must be designed into the authorization and key-derivation layers from the outset, not retrofitted.</p>
-<h3>2.3 Trust and Verifiability</h3>
+<h3>2.3 Consensus and Liveness Risk</h3>
+<p>Centralized or low-node-count custody schemes are highly vulnerable to <strong>DDoS and targeted outages</strong>: once the signing quorum is unreachable, the system halts and user operations freeze. Luvion&#39;s <strong>33-node dynamic committee</strong> and <strong>liveness-dependent lock</strong> ensure that consensus-layer attacks cannot shorten the revocation window—they can only prolong the locked state, preserving user recovery time.</p>
+<h3>2.4 Trust and Verifiability</h3>
 <p>In a distributed signing system, <strong>malicious or faulty nodes</strong> may submit invalid shards. Without cryptographic verification, the coordinator cannot distinguish honest computation from forgery. <strong>Zero-knowledge proofs</strong> allow the network to verify that each shard was produced by a valid circuit execution—without revealing the shard&#39;s secret content—enabling <strong>fault isolation</strong> and <strong>malicious-node reporting</strong>.</p>
 <hr>
 <h2>3. Solution Overview</h2>
 <p>Luvion implements a <strong>sovereign asset fortress</strong> with five pillars:</p>
 <ol>
-<li><p><strong>Threshold MPC (18/10)</strong><br>The &quot;key&quot; is never materialized. Signing requires a <strong>quorum of 10 from 18</strong> geographically and logically distributed nodes. No single node (including the user device) holds a full key; reconstruction is performed only in a <strong>secure multi-party protocol</strong> that outputs a signature, not a key.</p>
+<li><p><strong>Threshold MPC (33/22)</strong><br>The &quot;key&quot; is never materialized. Signing requires a <strong>quorum of 22 from 33</strong> geographically and logically distributed nodes (DVC). No single node (including the user device) holds a full key; reconstruction is performed only in a <strong>secure multi-party protocol</strong> that outputs a signature, not a key.</p>
 </li>
 <li><p><strong>Post-Quantum Hardening (PQC)</strong><br>The primary authorization and key-establishment layer uses <strong>NIST-standardized post-quantum primitives</strong> (e.g. <strong>Kyber-768</strong> for KEM). This ensures that even if an adversary gains classical access to the system, future quantum capability cannot retroactively break the authorization design.</p>
 </li>
 <li><p><strong>ZK-Fault Proofs</strong><br>Every signature shard submitted to the coordinator is accompanied by a <strong>Groth16 ZK-SNARK proof</strong> over a fixed circuit (e.g. on <strong>Bn254</strong>). The verifier checks the proof and public inputs; failure triggers <strong>malicious-node reporting</strong> and exclusion from the signing set. Thus, <strong>shard integrity</strong> is enforced without exposing secret material.</p>
 </li>
-<li><p><strong>Self-Healing Mesh</strong><br>A <strong>heartbeat monitor</strong> periodically scans the 18-node mesh. When a node is detected offline or unresponsive, the protocol triggers <strong>proactive resharing</strong> so that the effective threshold remains satisfiable with the live set. Combined with P2P discovery (e.g. <strong>Kademlia</strong>) and overlay broadcast (e.g. <strong>Gossipsub</strong>), the mesh maintains liveness and consistency.</p>
+<li><p><strong>Self-Healing Mesh</strong><br>A <strong>heartbeat monitor</strong> periodically scans the 33-node mesh. When a node is detected offline or unresponsive, the protocol triggers <strong>proactive resharing</strong> so that the effective threshold remains satisfiable with the live set. Combined with P2P discovery (e.g. <strong>Kademlia</strong>) and overlay broadcast (e.g. <strong>Gossipsub</strong>), the mesh maintains liveness and consistency.</p>
 </li>
 <li><p><strong>Institutional Safeguards</strong><br><strong>L-SG (SafeGuard™)</strong> provides time-locked, physical-seed recovery (e.g. QR-code shards). A <strong>risk-preview engine</strong> performs real-time transaction simulation to block high-risk contract interactions. When the number of active peers falls below the threshold, <strong>hardened local storage</strong> (e.g. TPM or Secure Enclave) is used to re-encrypt local shard material.</p>
 </li>
 </ol>
-<hr>
-<h2>3.2 Dynamic Verification Committee (DVC)</h2>
+<h3>3.2 Dynamic Verification Committee (DVC)</h3>
 <p>To balance decentralization and execution efficiency, Luvion replaces a fixed committee with a <strong>Dynamic Verification Committee (DVC)</strong>:</p>
 <ul>
 <li><strong>Staking pool size</strong>: the protocol allows $N \ge 100$ independent nodes to enter a candidate pool by staking $LVN$.</li>
 <li><strong>Committee sampling</strong>: at each Epoch (≈ 1 hour), the system uses a <strong>Verifiable Random Function (VRF)</strong> to sample <strong>33 active nodes</strong> from the candidate pool to form the on-duty committee.</li>
 <li><strong>Threshold consensus</strong>: the committee uses a $t=22,\ n=33$ threshold signing scheme. An attacker would need to compromise 22 globally distributed, dynamically changing nodes within a single epoch—statistically infeasible.</li>
-<li><strong>Performance target</strong>: 33 nodes is a practical “sweet spot” for MPC communication overhead, keeping signing latency stable at $T &lt; 200ms$ under global network conditions.</li>
+<li><strong>Performance target</strong>: 33 nodes is a practical &quot;sweet spot&quot; for MPC communication overhead, keeping signing latency stable at $T &lt; 200ms$ under global network conditions.</li>
 </ul>
-<h2>3.3 Trustless Distributed Key Generation (DKG)</h2>
+<h3>3.3 Trustless Distributed Key Generation (DKG)</h3>
 <p>Luvion rejects any centralized private-key distribution. The protocol adopts an improved <strong>Pedersen Verifiable Secret Sharing (VSS)</strong>-style DKG:</p>
 <ul>
 <li><strong>Decentralized generation</strong>: at Genesis or during committee rotation, each node generates a local random polynomial and interacts with peers via a secret-sharing protocol.</li>
-<li><strong>Secret shares</strong>: the full private key $SK$ never exists in one place; it only exists as mathematical fragments held in each node’s protected memory.</li>
-<li><strong>Public commitments</strong>: via public commitments (and Lagrange interpolation over commitments), participants can verify the validity of peers’ contributions without revealing private shares.</li>
+<li><strong>Secret shares</strong>: the full private key $SK$ never exists in one place; it only exists as mathematical fragments held in each node&#39;s protected memory.</li>
+<li><strong>Public commitments</strong>: via public commitments (and Lagrange interpolation over commitments), participants can verify the validity of peers&#39; contributions without revealing private shares.</li>
 </ul>
-<h2>3.4 View Change &amp; Liveness Recovery</h2>
+<h3>3.4 View Change &amp; Liveness Recovery</h3>
 <p>If the current 33-node committee experiences excessive delay or partial outage, the system triggers <strong>View Change</strong> to preserve liveness:</p>
 <ul>
-<li><strong>Fault tolerance trigger</strong>: if more than $f=11$ active nodes become high-latency or unresponsive, the protocol initiates View Change.</li>
-<li><strong>Rescheduling</strong>: the coordinator re-selects reachable nodes (still verifiable under VRF/committee rules) and re-establishes quorum to maintain service availability.</li>
+<li><strong>Fault tolerance trigger</strong>: if more than $f=11$ active nodes become high-latency or unresponsive, or if the current committee <strong>fails to reach consensus within 5 seconds</strong>, the protocol initiates View Change.</li>
+<li><strong>Rescheduling</strong>: the candidate pool immediately intervenes to form a new 33-node committee, achieving <strong>second-scale consensus recovery</strong>.</li>
 </ul>
+<h3>3.5 Asynchronous Threshold Waiting</h3>
+<p>To handle global network latency without blocking on the slowest node, Luvion uses <strong>asynchronous threshold aggregation</strong>:</p>
+<ul>
+<li><strong>Threshold-first completion</strong>: The signature aggregator <strong>completes as soon as the first 22</strong> valid partial signatures (shares) are collected—it does <strong>not</strong> wait for all 33 responses.</li>
+<li><strong>Performance</strong>: This masks long-tail latency; <strong>average signing latency</strong> is kept stable within <strong>250ms</strong> under normal conditions.</li>
+</ul>
+<hr>
 <h2>4. Technical Architecture</h2>
 <h3>4.1 Threshold MPC and Sharding</h3>
 <ul>
-<li><strong>Model</strong>: <strong>18 nodes</strong>, <strong>threshold 10</strong> (18/10). A valid signature is produced only when at least 10 nodes contribute correct partial signatures (or shards) to a <strong>threshold signature scheme</strong>.</li>
-<li><strong>Key material</strong>: The &quot;master&quot; secret is split using <strong>Shamir-style secret sharing</strong> (or equivalent) into 18 shards. Each shard is stored at a distinct node; <strong>no node</strong> has access to more than one shard in the intended deployment.</li>
-<li><strong>Signing path</strong>: The protocol <strong>never reconstructs</strong> the full private key. Signing is performed via <strong>multi-party computation</strong>: each node computes a partial signature over the message; a <strong>combiner</strong> (or distributed protocol) produces the final signature from at least 10 valid partials.</li>
+<li><strong>Model</strong>: <strong>33 nodes</strong> (DVC), <strong>threshold 22</strong> (33/22). A valid signature is produced only when at least 22 nodes contribute correct partial signatures (or shards) to a <strong>threshold signature scheme</strong>.</li>
+<li><strong>Key material</strong>: The &quot;master&quot; secret is split using <strong>Shamir-style / DKG</strong> into 33 shards. Each shard is stored at a distinct node; <strong>no node</strong> has access to more than one shard in the intended deployment.</li>
+<li><strong>Signing path</strong>: The protocol <strong>never reconstructs</strong> the full private key. Signing is performed via <strong>multi-party computation</strong>: each node computes a partial signature over the message; a <strong>combiner</strong> (or distributed protocol) produces the final signature from at least 22 valid partials (see §3.5 asynchronous threshold waiting).</li>
 <li><strong>BIP44 / HD</strong>: Shard-derived material supports <strong>path-based derivation</strong> (e.g. BIP44) so that different chains (e.g. Ethereum, Solana) can be addressed from the same MPC root without re-sharing.</li>
 </ul>
 <h3>4.2 Post-Quantum Cryptography (PQC)</h3>
@@ -110,16 +120,17 @@
 </ul>
 <h3>4.4 Self-Healing Mesh and Proactive Resharing</h3>
 <ul>
-<li><strong>Topology</strong>: 18 nodes form a <strong>P2P mesh</strong> with discovery via <strong>Kademlia</strong> (DHT) and broadcast via <strong>Gossipsub</strong> (or equivalent). Shard updates and resharing messages are propagated through this overlay.</li>
+<li><strong>Topology</strong>: 33 nodes (DVC) form a <strong>P2P mesh</strong> with discovery via <strong>Kademlia</strong> (DHT) and broadcast via <strong>Gossipsub</strong> (or equivalent). Shard updates and resharing messages are propagated through this overlay.</li>
 <li><strong>Heartbeat</strong>: A <strong>heartbeat monitor</strong> runs at a fixed interval (e.g. 5 seconds). It <strong>scans</strong> the mesh (e.g. <code>scan_node_mesh</code>) and marks nodes that do not respond as <strong>offline</strong>.</li>
-<li><strong>Proactive resharing</strong>: For each node detected <strong>offline</strong>, the protocol invokes <strong>trigger_shard_resharing(node_id)</strong>. This initiates a <strong>proactive resharing</strong> protocol so that the remaining live nodes obtain new shards and the threshold (10) remains achievable without the failed node. No full key is ever reconstructed; resharing is done in a distributed manner.</li>
-<li><strong>Consensus and liveness</strong>: The system periodically <strong>checks shard consensus</strong> (<code>check_shard_consensus</code>) and <strong>redistributes shards</strong> (<code>redistribute_shards</code>) after resharing. This keeps the mesh in a <strong>consistent and available</strong> state despite churn.</li>
+<li><strong>Proactive resharing</strong>: For each node detected <strong>offline</strong>, the protocol invokes <strong>trigger_shard_resharing(node_id)</strong>. This initiates <strong>proactive resharing</strong> so that the remaining live nodes obtain new shards and the threshold (22) remains achievable. No full key is ever reconstructed; resharing is done in a distributed manner.</li>
+<li><strong>Consensus and liveness</strong>: The system periodically <strong>checks shard consensus</strong> and <strong>redistributes shards</strong> after resharing. This keeps the mesh in a <strong>consistent and available</strong> state despite churn.</li>
 </ul>
 <h3>4.5 Institutional Safeguards</h3>
 <ul>
-<li><strong>L-SG (SafeGuard™) Recovery</strong>: A <strong>time-locked recovery</strong> protocol with <strong>physical seed shards</strong> (e.g. QR-code printed or engraved). Recovery requires both the time lock to expire and the physical shards to be combined in a controlled environment. This mitigates remote coercion and single-device loss.</li>
-<li><strong>Risk-Preview Engine</strong>: Before any transaction is broadcast, a <strong>sandboxed simulation</strong> (e.g. <code>cmd_simulate_transaction</code>) runs. High-risk patterns (e.g. unlimited approvals, unknown contracts) are flagged; the user must explicitly confirm or abort. This reduces <strong>approval and phishing</strong> risks.</li>
-<li><strong>Hardened Local Storage</strong>: When the number of <strong>active peers</strong> drops below the <strong>threshold</strong> (e.g. 10), the client triggers <strong>hardened_local_storage</strong>: local shard material is <strong>re-encrypted</strong> using <strong>TPM</strong> or <strong>Secure Enclave</strong> (or equivalent). This limits exposure if the mesh is temporarily degraded.</li>
+<li><strong>L-SG (SafeGuard™) Recovery</strong>: A <strong>time-locked recovery</strong> protocol (default <strong>24h</strong> revocation window) with <strong>physical seed shards</strong> (e.g. QR-code). Recovery requires the time lock to expire and physical shards to be combined in a controlled environment. <strong>Revocation commands</strong> use <strong>Kyber-768</strong> so they remain secure in the quantum era. This mitigates remote coercion and single-device loss.</li>
+<li><strong>Liveness-Dependent Lock</strong>: When the network status is <strong>not Optimal</strong> (e.g. active nodes &lt; 22, or View Change in progress), the <strong>asset release countdown is suspended</strong>. Attackers cannot shorten the revocation window—they can only prolong the locked state, ensuring users always have sufficient time to revoke.</li>
+<li><strong>Risk-Preview Engine</strong>: Before any transaction is broadcast, a <strong>sandboxed simulation</strong> (e.g. <code>cmd_simulate_transaction</code>) runs. High-risk patterns are flagged; the user must explicitly confirm or abort. This reduces <strong>approval and phishing</strong> risks.</li>
+<li><strong>Hardened Local Storage</strong>: When the number of <strong>active peers</strong> drops below the <strong>threshold</strong> (22), the client triggers <strong>hardened_local_storage</strong>: local shard material is <strong>re-encrypted</strong> using <strong>TPM</strong> or <strong>Secure Enclave</strong>. This limits exposure if the mesh is temporarily degraded.</li>
 <li><strong>Biometric and 2FA</strong>: Critical actions (e.g. withdrawal) require <strong>biometric authentication</strong> (e.g. Touch ID / Face ID) and optional <strong>2FA</strong>, ensuring that even with device access, signing requires user presence.</li>
 </ul>
 <hr>
@@ -133,7 +144,7 @@
 </thead>
 <tbody><tr>
 <td><strong>Single node compromise</strong></td>
-<td>No full key; threshold 10/18; ZK verification rejects invalid shards.</td>
+<td>No full key; threshold 22/33; ZK verification rejects invalid shards.</td>
 </tr>
 <tr>
 <td><strong>Quantum adversary</strong></td>
@@ -145,7 +156,7 @@
 </tr>
 <tr>
 <td><strong>Network partition / node churn</strong></td>
-<td>Heartbeat + proactive resharing; mesh self-heals; hardened storage when below threshold.</td>
+<td>Heartbeat + proactive resharing; mesh self-heals; <strong>liveness-dependent lock</strong> and hardened storage when below threshold.</td>
 </tr>
 <tr>
 <td><strong>Phishing / approval abuse</strong></td>
@@ -156,22 +167,27 @@
 <td>L-SG time-lock + physical shards; no single device holds recoverable full key.</td>
 </tr>
 </tbody></table>
-<h2>5.2 Dynamic Staking Coefficient</h2>
+<h3>5.2 Dynamic Staking Coefficient</h3>
 <p>To deter low-cost attacks, Luvion applies a dynamic minimum staking requirement for active nodes that scales with secured value (TVL):</p>
 <p>[
 Stake_{min} = \alpha \cdot \frac{TVL}{N}
 ]</p>
 <p>where (\alpha) is a security coefficient. The objective is to keep the economic cost of misbehavior consistently <strong>above 300%</strong> of the potential profit.</p>
+<h3>5.3 Tokenomics</h3>
+<ul>
+<li><strong>$LVN Staking</strong>: Nodes must stake $LVN to obtain committee selection weight; misbehavior leads to <strong>Slashing</strong>.</li>
+<li><strong>Dynamic staking coefficient</strong>: Minimum stake scales with secured TVL (§5.2), keeping attack cost above 300% of potential profit.</li>
+</ul>
 <hr>
 <h2>6. Robustness &amp; Security Hardening (Chapter VI)</h2>
 <h3>6.1 Recursive Proof Aggregation</h3>
-<p>To reduce communication overhead when verifying ZK proofs across large node clusters (18 nodes+), Luvion adopts a <strong>Recursive SNARKs</strong> architecture. Traditional <strong>O(n)</strong> linear verification is replaced with <strong>O(1)</strong> constant-time verification, keeping verification latency under <strong>T &lt; 100ms</strong> even under high concurrency.</p>
+<p>To reduce communication overhead when verifying ZK proofs across large node clusters (33 nodes+), Luvion adopts a <strong>Recursive SNARKs</strong> architecture. Traditional <strong>O(n)</strong> linear verification is replaced with <strong>O(1)</strong> constant-time verification, keeping verification latency under <strong>T &lt; 100ms</strong> even under high concurrency.</p>
 <h3>6.2 Hybrid PQC-ZK State Compression</h3>
 <p>Post-quantum signatures (Kyber-768 / Dilithium) incur high on-chain Gas cost. Luvion uses a <strong>layered verification</strong> design: full-strength PQC verification remains inside the Mesh; only the verification result is <strong>compressed into a short ZK-SNARK proof</strong> and submitted to L1, <strong>reducing user Gas cost by ~98%</strong>.</p>
 <h3>6.3 Consensus-Gated Slashing</h3>
 <p>No slashing takes effect on a single authority&#39;s say. Any slashing decision must be backed by <strong>BFT consensus</strong> with <strong>Q &gt; (2/3)N + 1</strong> signatures. A randomly selected <strong>Guardian Nodes</strong> governance committee acts as final arbiter, ensuring <strong>social-consensus-level</strong> self-healing.</p>
 <h3>6.4 Quorum &amp; Split-Brain Protection</h3>
-<p>When the number of <strong>active nodes</strong> falls below 51% of the network (<strong>N &lt; 10</strong>), the system enters <strong>protective lock mode</strong> and <strong>rejects all signing requests</strong>. This prevents double-spend under network partition and keeps <strong>global cross-region consistency</strong>.</p>
+<p>When the number of <strong>active nodes</strong> falls below the <strong>signature threshold</strong> (<em>N &lt; 22</em>), the system enters <strong>protective lock mode</strong> and <strong>rejects all signing requests</strong>. This prevents double-spend under network partition and keeps <strong>global cross-region consistency</strong>.</p>
 <h3>6.5 Multi-channel Async Revocation</h3>
 <p>To counter DDoS or social-engineering attacks, the <strong>L-SG protocol</strong> supports <strong>smart time-delay</strong>: on anomaly detection, the revocation window is extended to <strong>72 hours</strong>, and pre-configured <strong>trusted circles</strong> can asynchronously trigger emergency lock, providing a <strong>physical last line of defense</strong> for user assets.</p>
 <hr>
@@ -187,7 +203,7 @@ Stake_{min} = \alpha \cdot \frac{TVL}{N}
 <tbody><tr>
 <td align="left"><strong>I</strong></td>
 <td align="left"><strong>Core MPC</strong></td>
-<td align="left">18-node threshold implementation; Shamir/SSS; no full-key materialization.</td>
+<td align="left">33-node DVC threshold; Shamir/DKG; no full-key materialization.</td>
 </tr>
 <tr>
 <td align="left"><strong>II</strong></td>
@@ -202,10 +218,10 @@ Stake_{min} = \alpha \cdot \frac{TVL}{N}
 <tr>
 <td align="left"><strong>IV</strong></td>
 <td align="left"><strong>Self-Healing &amp; Production</strong></td>
-<td align="left">Heartbeat monitor; proactive resharing; Kademlia/Gossipsub; hardened storage and L-SG.</td>
+<td align="left">Heartbeat monitor; proactive resharing; Kademlia/Gossipsub; liveness-dependent lock; hardened storage and L-SG.</td>
 </tr>
 </tbody></table>
-<h2>7.2 Protocol Evolution Roadmap</h2>
+<h3>7.2 Protocol Evolution Roadmap</h3>
 <ul>
 <li><strong>Phase 1 (Genesis)</strong>: launch 18 core founding nodes to establish the security baseline.  </li>
 <li><strong>Phase 2 (Decentralization)</strong>: enable $LVN$ staking, expand to 100+ nodes, and activate VRF-based DVC (33-node committee).  </li>
@@ -213,7 +229,8 @@ Stake_{min} = \alpha \cdot \frac{TVL}{N}
 </ul>
 <hr>
 <h2>8. Conclusion</h2>
-<p>Luvion proposes a <strong>sovereign asset fortress</strong> where <strong>no single key</strong> exists, <strong>every shard is ZK-verified</strong>, and the <strong>mesh self-heals</strong> under failure. By combining <strong>threshold MPC</strong>, <strong>PQC</strong>, and <strong>ZK-Fault Proofs</strong> with institutional safeguards (L-SG, risk preview, hardened storage), the protocol targets <strong>institutional-grade</strong> security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.</p>
+<p>Luvion is not only a security tool but a necessary step for Web3 toward <strong>institutional- and quantum-grade</strong> evolution. By deeply integrating <strong>33-node distributed consensus</strong> with the <strong>liveness-dependent lock</strong>, the protocol delivers a truly &quot;worry-free&quot; ownership experience.</p>
+<p>Luvion proposes a <strong>sovereign asset fortress</strong> where <strong>no single key</strong> exists, <strong>every shard is ZK-verified</strong>, and the <strong>mesh self-heals</strong> under failure. With <strong>threshold MPC (33/22)</strong>, <strong>PQC</strong>, <strong>ZK-Fault Proofs</strong>, and institutional safeguards (L-SG, <strong>liveness-dependent lock</strong>, risk preview, hardened storage), the protocol targets <strong>institutional-grade</strong> security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.</p>
 <hr>
 <h2>References</h2>
 <ol>
@@ -225,6 +242,7 @@ Stake_{min} = \alpha \cdot \frac{TVL}{N}
 </ol>
 <hr>
 <p><em>Document classification: Draft for institutional and investment review. Not a commitment to a specific implementation or timeline.</em></p>
+<p><em>© 2026 Luvion Labs. Confidential Technical Document.</em></p>
 </div>
   <p class="print-hint">To save as PDF: <strong>File → Print → Save as PDF</strong>. To remove date/title from each page: in the Print dialog open <strong>More settings</strong> (更多设置) and turn off <strong>Headers and footers</strong> (页眉和页脚).</p>
 </body>
