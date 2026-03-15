@@ -1,36 +1,36 @@
-//! L-SG 金库合约逻辑：撤销窗口内根据网络共识状态决定是否允许释放
+//! L-SG vault logic: within revocation window, release allowed only when consensus is stable.
 
 use crate::consensus::{NetworkState, NetworkStatus, ViewChangeManager};
 use crate::core::config::REVOCATION_WINDOW_HOURS;
 
-/// 活性锁检查：非 Optimal 时禁止资产释放，返回错误
+/// Liveness lock: forbid release when not Optimal, return error.
 pub fn ensure_release_allowed(network_manager: &ViewChangeManager) -> Result<(), String> {
     if network_manager.get_status() != NetworkStatus::Optimal {
         return Err(
-            "网络共识不稳定，L-SG 撤销窗口已自动挂起，资产暂时冻结以保护安全。".to_string(),
+            "Network consensus unstable; L-SG revocation window suspended, assets frozen for safety.".to_string(),
         );
     }
     Ok(())
 }
 
-/// L-SG 金库：交易时间戳与当前时间，用于撤销窗口校验
+/// L-SG vault: tx timestamp and current time for revocation window check.
 pub struct LuvionVault {
-    /// 交易发起时间（秒级时间戳）
+    /// Transaction timestamp (seconds)
     pub tx_timestamp: u64,
-    /// 当前链/系统时间（秒级时间戳）
+    /// Current chain/system time (seconds)
     pub current_time: u64,
 }
 
 impl LuvionVault {
-    /// 检查资产是否已过撤销保护期，可以正式释放给目标地址。
-    /// 若网络处于 ViewChanging 或 Suspended，一律拒绝释放。
+    /// Whether the asset is past the revocation window and can be released.
+    /// If network is ViewChanging or Suspended, always deny release.
     pub fn is_safe_to_release(&self, network_state: &NetworkState) -> bool {
         if matches!(
             network_state,
             NetworkState::ViewChanging(_) | NetworkState::Suspended
         ) {
             eprintln!(
-                "安全拦截: 网络共识不稳定，L-SG 撤销窗口自动冻结挂起！"
+                "Release blocked: network consensus unstable, L-SG window frozen."
             );
             return false;
         }

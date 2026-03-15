@@ -1,5 +1,4 @@
-// Kademlia 节点发现：通过 Bootstrap 扩散并寻找 18 个分片承载点（XOR 距离优先）
-// 完整实现需接入 libp2p：SwarmBuilder + Kademlia + MemoryStore
+// Kademlia discovery: bootstrap and find shard carriers (XOR distance); full impl = libp2p SwarmBuilder + Kademlia + MemoryStore
 //
 // use libp2p::{
 //     kad::{record::store::MemoryStore, Kademlia, KademliaEvent},
@@ -19,8 +18,8 @@
 
 use std::error::Error;
 
-/// 初始化 Kademlia 行为，引导节点快速扩散并寻找 18 个分片承载点
+/// Init Kademlia; bootstrap and find shard carriers.
 pub async fn init_node_discovery() -> Result<(), Box<dyn Error>> {
-    // 占位：实际接入 libp2p 后在此启动 Swarm 与 Kademlia 事件循环
+    // Placeholder: start Swarm and Kademlia event loop when libp2p wired
     Ok(())
 }

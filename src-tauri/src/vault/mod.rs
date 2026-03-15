@@ -34,7 +34,7 @@ impl VaultManager {
     }
 }
 
-/// 占位：用主密钥加密委员会分片恢复元数据，供紧急包/二维码使用
+/// Placeholder: encrypt committee shard recovery metadata with master key for emergency kit/QR
 pub fn encrypt_recovery_bundle() -> Result<String, String> {
     Ok("recovery_bundle_placeholder".to_string())
 }

@@ -1,4 +1,4 @@
-//! MPC 模块：Groth16 分片声明验证 + 签名份额校验中间件
+//! MPC: Groth16 shard-claim verification + signing-share validation middleware.
 pub mod core;
 pub mod signing;
 pub mod zk_proof_system;

@@ -13,12 +13,12 @@ contract AtomicSwap {
 
     mapping(bytes32 => Swap) public swaps;
 
-    // 1. 用户锁定资产
+    // 1. User locks asset
     function lock(bytes32 _id, bytes32 _hashlock, uint256 _timelock, address _receiver) external payable {
         swaps[_id] = Swap(msg.value, _hashlock, block.timestamp + _timelock, msg.sender, _receiver, false);
     }
 
-    // 2. 用户利用哈希原像（Secret）提走资产
+    // 2. User claims with hash preimage (Secret)
     function claim(bytes32 _id, bytes32 _preimage) external {
         Swap storage s = swaps[_id];
         require(keccak256(abi.encodePacked(_preimage)) == s.hashlock, "Invalid preimage");

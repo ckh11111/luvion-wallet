@@ -1,4 +1,4 @@
-/// 占位：在 HTLC 合约上执行 claim，返回交易哈希
+/// Placeholder: execute claim on HTLC contract; return tx hash.
 pub async fn claim_htlc(
     _swap_id: String,
     _preimage: String,

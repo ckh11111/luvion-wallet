@@ -1,11 +1,11 @@
 use super::tee::EnclaveManager;
 
-/// 占位：从系统生物识别获取 token
+/// Placeholder: get token from system biometric.
 pub fn get_biometric_token() -> Vec<u8> {
     b"biometric_placeholder".to_vec()
 }
 
-/// 占位：从加密存储读取 vault 密文
+/// Placeholder: read vault cipher from encrypted storage.
 pub fn get_vault_secret() -> Vec<u8> {
     b"vault_encrypted_shard_placeholder".to_vec()
 }

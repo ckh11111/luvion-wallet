@@ -1,6 +1,6 @@
-//! 罚没相关类型：地址、错误、共识层鉴权
+//! Slashing types: address, errors, consensus auth.
 
-/// 节点地址（与链上/网格 ID 一致，此处用 20 字节表示）
+/// Node address (aligned with chain/mesh ID; 20 bytes here).
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Address(pub [u8; 20]);
 
@@ -10,14 +10,14 @@ impl std::fmt::Display for Address {
     }
 }
 
-/// 共识投票签名（占位：生产环境为 BFT 节点对罚没决议的签名）
+/// Consensus vote signature (placeholder: BFT node signature on slash decision).
 #[derive(Clone)]
 pub struct Signature(pub Vec<u8>);
 
 impl Signature {
-    /// 校验签名真实性，失败返回 SlashingError
+    /// Verify signature; on failure return SlashingError.
     pub fn verify_or_fail(&self) -> Result<(), SlashingError> {
-        // 占位：生产环境应校验节点公钥与消息摘要
+        // Placeholder: verify node pubkey and message digest in production
         if self.0.is_empty() {
             return Err(SlashingError::InvalidVoteSignature);
         }
@@ -25,24 +25,24 @@ impl Signature {
     }
 }
 
-/// 罚没流程可能出现的错误
+/// Slashing flow errors.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SlashingError {
-    /// 调用方未持有共识层鉴权，无权执行罚没
+    /// Caller not consensus-authorized.
     Unauthorized,
-    /// 投票人数未达到 BFT 法定人数 (2/3+1)
+    /// Votes below BFT quorum (2/3+1).
     InsufficientQuorum,
-    /// 投票签名校验失败
+    /// Vote signature verification failed.
     InvalidVoteSignature,
-    /// 节点已处于冻结期，不可重复罚没
+    /// Node already frozen; no double slash.
     AlreadyFrozen,
-    /// 节点未在恶意记录中，无需罚没
+    /// Node not in malicious record.
     NotMalicious,
-    /// 质押/代币操作失败
+    /// Vault/token op failed.
     VaultError(String),
-    /// 代币转入补偿池失败
+    /// Transfer to pool failed.
     TransferFailed(String),
-    /// 从网格移除节点失败
+    /// Mesh remove failed.
     MeshRemoveFailed(String),
 }
 
@@ -63,14 +63,12 @@ impl std::fmt::Display for SlashingError {
 
 impl std::error::Error for SlashingError {}
 
-/// 共识层鉴权令牌：仅由网格共识层在达成罚没共识后创建并传入，
-/// 确保只有共识层有权调用 `execute_slashing`。
+/// Consensus auth token: only created by consensus layer after slash consensus; only consensus may call execute_slashing.
 #[derive(Clone, Copy)]
 pub struct ConsensusAuth(());
 
 impl ConsensusAuth {
-    /// 仅由共识层模块调用，用于在达成罚没共识后获取鉴权并调用罚没接口。
-    /// 业务代码不应直接构造此类型，而应通过共识层入口获取。
+    /// Only consensus module; obtain after slash consensus to call slash API. Do not construct elsewhere.
     #[allow(dead_code)]
     pub fn from_consensus_layer() -> Self {
         Self(())

@@ -8,9 +8,9 @@ export const SafeHouseKit = () => {
     setGenerating(true);
     try {
       await invoke('cmd_generate_emergency_kit');
-      alert('紧急逃生套件已生成并加密，请打印后物理锁存。');
+      alert('Emergency kit generated and encrypted. Please print and store physically.');
     } catch {
-      alert('生成失败，请重试。');
+      alert('Generation failed. Please retry.');
     } finally {
       setGenerating(false);
     }
@@ -20,9 +20,9 @@ export const SafeHouseKit = () => {
     <section className="mt-12 p-6 border-2 border-dashed border-slate-200 rounded-2xl">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-slate-900">紧急逃生舱 / Safe-House Kit</h3>
+          <h3 className="text-sm font-bold text-slate-900">Emergency Safe-House Kit</h3>
           <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-tighter">
-            生成物理级加密备份，确保极端断网环境下的资产主权
+            Generate physically encrypted backup to preserve asset sovereignty when offline
           </p>
         </div>
         <button
@@ -30,7 +30,7 @@ export const SafeHouseKit = () => {
           disabled={generating}
           className="bg-red-50 text-red-600 text-xs font-bold px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-all disabled:opacity-60"
         >
-          {generating ? '生成中...' : '立即备份'}
+          {generating ? 'Generating...' : 'Backup now'}
         </button>
       </div>
     </section>

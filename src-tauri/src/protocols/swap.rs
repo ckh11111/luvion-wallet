@@ -9,7 +9,7 @@ pub struct AtomicSwapSession {
 }
 
 impl AtomicSwapSession {
-    /// 开启一个交换会话：生成哈希锁
+    /// Start swap session: generate hash lock.
     pub fn new() -> Self {
         let secret = rand::random::<[u8; 32]>();
         let h = Sha256::digest(&secret);
@@ -18,7 +18,7 @@ impl AtomicSwapSession {
         Self { hash_lock, secret }
     }
 
-    /// 执行提现逻辑
+    /// Execute withdraw logic.
     pub async fn claim_btc_assets(&self, contract_addr: &str) -> Result<String, String> {
         let secret_hex = EnclaveManager::reveal_secret_for_swap(&self.secret)?;
         let txid = btc_client::send_claim_tx(contract_addr, secret_hex).await?;

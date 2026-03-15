@@ -1,13 +1,13 @@
-// 节点数低于门限时，对本地分片做 TPM/安全芯片二级加密
+// When nodes below threshold, apply TPM/Secure Enclave second-layer encryption to local shards.
 use crate::core::config::LUVION_V1;
 use crate::crypto::sss::Shard;
 use crate::p2p;
 
 fn encrypt_with_tpm(_shards: Vec<Shard>) {
-    // 占位：调用本机 TPM/Secure Enclave 对分片加密
+    // Placeholder: call local TPM/Secure Enclave to encrypt shards
 }
 
-/// 当节点数 < 门限（LUVION_V1.signature_threshold）时，强制对本地分片进行硬件级加固
+/// When nodes < threshold (LUVION_V1.signature_threshold), enforce hardware hardening of local shards.
 pub async fn hardened_local_storage(shards: Vec<Shard>) {
     let count = p2p::get_active_peer_count().await;
     if count < LUVION_V1.signature_threshold as u32 {

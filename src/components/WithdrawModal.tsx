@@ -43,7 +43,7 @@ export const WithdrawModal = ({ onClose }: { onClose?: () => void }) => {
       if (supportsWebAuthn) {
         isAuth = await handleBiometricVerify(
           () => executeThresholdSignature(),
-          () => setMessage({ type: 'error', text: '验证失败，请使用指纹/面容重试' })
+          () => setMessage({ type: 'error', text: 'Verification failed. Please retry with fingerprint or face.' })
         );
       }
       if (!isAuth && !supportsWebAuthn) {
@@ -54,7 +54,7 @@ export const WithdrawModal = ({ onClose }: { onClose?: () => void }) => {
         setMessage({ type: 'error', text: 'Authentication Failed.' });
       }
     } catch (err) {
-      setMessage({ type: 'error', text: '验证失败，请使用指纹/面容重试' });
+      setMessage({ type: 'error', text: 'Verification failed. Please retry with fingerprint or face.' });
       try {
         console.error('Biometric failed', err);
       } catch { /* noop */ }

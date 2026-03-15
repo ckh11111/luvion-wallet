@@ -11,7 +11,7 @@ export interface SafeWallet {
 }
 
 /**
- * 一行代码创建受保护金库：抗量子 / L-SG 可配置
+ * One-line API to create a protected vault (quantum-safe / L-SG configurable).
  */
 export const Luvion = {
   async createSafe(options: CreateSafeOptions): Promise<SafeWallet> {

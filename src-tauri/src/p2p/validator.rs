@@ -1,6 +1,6 @@
 use crate::crypto::merkle;
 
-/// 校验节点数据；失败时触发前端告警事件（占位：仅打日志）
+/// Validate node data; on failure trigger frontend alert (placeholder: log only).
 pub fn validate_node_data(
     root: [u8; 32],
     index: usize,
@@ -14,7 +14,7 @@ pub fn validate_node_data(
     true
 }
 
-/// 占位：实际可通过 Tauri AppHandle::emit 推送到前端
+/// Placeholder: in production use Tauri AppHandle::emit to frontend.
 fn emit_frontend_event(name: &str, index: usize) {
     println!("[P2P Validator] {} node_index={}", name, index);
 }

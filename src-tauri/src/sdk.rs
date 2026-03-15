@@ -1,13 +1,13 @@
-//! LuvionSDK：一行创建抗量子安全金库，SecurityTier 与 VaultAddress
+//! LuvionSDK: one-call create quantum-safe vault; SecurityTier and VaultAddress.
 
-/// 安全等级
+/// Security tier.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SecurityTier {
-    /// 使用高效的 Ed25519 签名
+    /// Efficient Ed25519 signing.
     Standard,
-    /// 开启 24h 时间锁 + 多签
+    /// 24h time-lock + multisig.
     Institutional,
-    /// 强制开启 Kyber-768 + ZK 递归聚合
+    /// Kyber-768 + ZK recursive aggregation.
     QuantumSafe,
 }
 
@@ -16,12 +16,12 @@ impl SecurityTier {
         match self {
             SecurityTier::Standard => 1.0,
             SecurityTier::Institutional => 2.0,
-            SecurityTier::QuantumSafe => 5.0, // 安全是有代价的
+            SecurityTier::QuantumSafe => 5.0, // Security has cost
         }
     }
 }
 
-/// 金库地址（与链上/网格一致）
+/// Vault address (aligned with chain/mesh).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VaultAddress(pub [u8; 20]);
 
@@ -31,14 +31,14 @@ impl std::fmt::Display for VaultAddress {
     }
 }
 
-/// 哪怕是小白，一行代码也能创建抗量子安全账户
+/// One-call create quantum-safe account.
 pub struct LuvionSDK;
 
 impl LuvionSDK {
-    /// 按安全等级创建金库，自动处理节点发现、密钥分片和 ZK 生成
+    /// Create vault by tier; handles node discovery, key sharding, ZK generation.
     pub async fn create_vault(tier: SecurityTier) -> VaultAddress {
-        eprintln!("正在部署您的 {:?} 级别金库...", tier);
-        // 占位：实际逻辑接入节点发现、分片、ZK
+        eprintln!("Deploying {:?} vault...", tier);
+        // Placeholder: wire node discovery, sharding, ZK
         VaultAddress([0u8; 20])
     }
 }

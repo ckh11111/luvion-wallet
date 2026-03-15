@@ -11,16 +11,16 @@ pub async fn run_self_healing_daemon() {
         let active_nodes = super::get_live_nodes().await;
 
         if active_nodes < threshold + 1 && active_nodes >= threshold {
-            println!("[Luvion Core] 触发自愈协议：正在进行 {}/{} 盲重组...", threshold, committee);
+            println!("[Luvion Core] Triggering self-heal: blind resharing {}/{}...", threshold, committee);
 
             let collected_shards = super::collect_shards_from_mesh(threshold).await;
 
             match EnclaveManager::reshard_in_enclave(collected_shards) {
                 Ok(new_shards) => {
                     super::redistribute_shards(new_shards).await;
-                    println!("[Luvion Core] 自愈完成：{} 个新分片已全网同步。", committee);
+                    println!("[Luvion Core] Self-heal done: {} new shards synced.", committee);
                 }
-                Err(e) => eprintln!("自愈失败: {}", e),
+                Err(e) => eprintln!("Self-heal failed: {}", e),
             }
         }
     }

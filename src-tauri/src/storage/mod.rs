@@ -1,1 +1,1 @@
-// 数据库锁逻辑（占位，后续实现）
+// DB lock logic (placeholder; to be implemented).

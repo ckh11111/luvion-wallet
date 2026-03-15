@@ -23,7 +23,7 @@ export const Assets = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(validAddress);
-    alert('地址已复制，请粘贴到欧易提现框');
+    alert('Address copied. Paste it into your withdrawal form.');
   };
 
   return (
@@ -76,7 +76,7 @@ export const Assets = () => {
                 <p className="text-[12px] font-mono break-all text-slate-800">
                   {validAddress}
                 </p>
-                <p className="text-[10px] text-blue-600 mt-1 font-bold underline">点击此处复制标准地址</p>
+                <p className="text-[10px] text-blue-600 mt-1 font-bold underline">Click here to copy standard address</p>
               </div>
             </div>
             <button

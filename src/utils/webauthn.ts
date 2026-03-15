@@ -1,5 +1,5 @@
 /**
- * WebAuthn 生物验证：指纹/面容，验证成功后执行后续交易逻辑
+ * WebAuthn biometric verification; on success, proceeds with transaction flow.
  */
 
 export async function handleBiometricVerify(
@@ -29,13 +29,13 @@ export async function handleBiometricVerify(
   try {
     const credential = await navigator.credentials.create(publicKeyCredentialCreationOptions);
     if (credential) {
-      console.log('生物验证成功:', credential);
+      console.log('Biometric verification success:', credential);
       await onSuccess();
       return true;
     }
     return false;
   } catch (err) {
-    console.error('生物验证失败或取消:', err);
+    console.error('Biometric verification failed or cancelled:', err);
     onError?.(err);
     return false;
   }

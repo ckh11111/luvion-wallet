@@ -1,15 +1,15 @@
-//! MPC 核心：将 Groth16 验证作为中间件插入 prepare_signing_shards 的签名份额校验流程
+//! MPC core: Groth16 verification as middleware in prepare_signing_shards share validation.
 use super::zk_proof_system::{Fr, ZKVerificationEngine};
 use ark_bn254::Bn254;
 use ark_groth16::Proof;
 
-/// 单条分片声明：节点提交的 proof + 公开输入
+/// Single shard claim: node's proof + public inputs.
 pub struct ShardClaim {
     pub proof: Proof<Bn254>,
     pub public_inputs: Vec<Fr>,
 }
 
-/// 中间件校验失败错误（含失败节点索引）
+/// Middleware verification failure (includes node index).
 #[derive(Debug)]
 pub struct ZKMiddlewareError(pub String);
 
@@ -21,14 +21,13 @@ impl std::fmt::Display for ZKMiddlewareError {
 
 impl std::error::Error for ZKMiddlewareError {}
 
-/// 校验失败时上报恶意节点（可对接心跳/重组协议）
+/// On verification failure report malicious node (can trigger heartbeat/resharing).
 pub fn report_malicious_node(node_id: u8) {
-    // 占位：实际上报到 P2P 声誉/心跳模块，触发 resharing 等
+    // Placeholder: report to P2P reputation/heartbeat; trigger resharing
     let _ = node_id;
 }
 
-/// ZK 验证中间件：在 prepare_signing_shards 流程中，先对每条分片声明做 Groth16 校验；
-/// 若某条校验失败则调用 report_malicious_node 并返回错误。
+/// ZK verification middleware: in prepare_signing_shards, verify each shard claim with Groth16; on failure call report_malicious_node and return error.
 pub fn run_zk_verification_middleware(
     engine: &ZKVerificationEngine,
     claims: &[ShardClaim],

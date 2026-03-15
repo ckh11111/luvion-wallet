@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-// --- 模拟数据 ---
+// Mock asset data
 const INITIAL_ASSETS = [
   { name: 'LUVION Crystal', symbol: 'L', balance: 0, safe: true },
   { name: 'ETH Ore', symbol: 'E', balance: 1.14, safe: true },
@@ -12,7 +12,7 @@ const PixelText = ({ text }: { text: string }) => (
 );
 
 export default function LuvionTerrariaWalletRestore() {
-  const [activeTab, setActiveTab] = useState('magic'); // 默认为祭坛，方便查看还原效果
+  const [activeTab, setActiveTab] = useState('magic'); // default: altar view
   const [showReceive, setShowReceive] = useState(false);
   const [showSend, setShowSend] = useState(false);
   const [showEncrypt, setShowEncrypt] = useState(false);
@@ -21,7 +21,7 @@ export default function LuvionTerrariaWalletRestore() {
   const totalShards = 33;
   const recoveredShards = 12;
 
-  // 点击资产的动态效果
+  // Click feedback on asset row
   const handleAssetClick = (index: number) => {
     setClickedIndex(index);
     setTimeout(() => setClickedIndex(null), 200);
@@ -31,62 +31,62 @@ export default function LuvionTerrariaWalletRestore() {
     <div className="min-h-screen w-full flex flex-col font-pixel overflow-hidden selection:bg-[#FFD700]"
          style={{ background: 'linear-gradient(180deg, #68A7FF 0%, #2E81FF 100%)' }}>
 
-      {/* --- 地表层：草地与导航 --- */}
+      {/* Surface: grass layer and nav */}
       <div className="h-40 w-full relative z-30"
            style={{ backgroundImage: "url('https://pixeljoint.com/files/icons/r_grass_top.png')", backgroundRepeat: 'repeat-x', backgroundSize: '32px 32px', imageRendering: 'pixelated' }}>
 
-        {/* 向导 NPC */}
+        {/* Guide NPC */}
         <div className="absolute bottom-6 left-12 flex items-end gap-4">
           <div className="w-12 h-16 bg-[#D2B48C] border-4 border-black animate-bounce" />
           <p className="text-white text-xs bg-black/40 px-2 border-2 border-white/20 uppercase font-arcade">Guide</p>
         </div>
 
-        {/* 导航标签 */}
+        {/* Tab buttons */}
         <div className="absolute bottom-4 right-12 flex gap-1">
           <button onClick={() => setActiveTab('assets')} className={`px-4 py-2 border-4 font-arcade text-[10px] transition-all ${activeTab === 'assets' ? 'bg-[#32CD32] border-[#185A18] -translate-y-1 shadow-[0_4px_0_#000] text-white' : 'bg-[#8B5A2B] border-[#3E2723] text-white/70'}`}>
-            <PixelText text="资产" />
+            <PixelText text="Assets" />
           </button>
           <button onClick={() => setActiveTab('magic')} className={`px-4 py-2 border-4 font-arcade text-[10px] transition-all ${activeTab === 'magic' ? 'bg-[#9370DB] border-[#4B0082] -translate-y-1 shadow-[0_4px_0_#000] text-white' : 'bg-[#8B5A2B] border-[#3E2723] text-white/70'}`}>
-            <PixelText text="祭坛" />
+            <PixelText text="Altar" />
           </button>
         </div>
       </div>
 
-      {/* --- 地下层：泥土区 --- */}
+      {/* Underground: dirt layer */}
       <main className="flex-1 overflow-y-auto p-8 relative"
             style={{ backgroundImage: "url('https://pixeljoint.com/files/icons/r_dirt_top.png')", backgroundRepeat: 'repeat', backgroundSize: '32px 32px', imageRendering: 'pixelated' }}>
 
         <div className="max-w-4xl mx-auto animate-fade-in">
 
-          {/* ================= 视图 A：资产 ================= */}
+          {/* View A: Assets */}
           {activeTab === 'assets' && (
             <div className="flex flex-col gap-6">
-              {/* 总余额面板 - 按钮已完美下移 */}
+              {/* Balance panel */}
               <div className="bg-[#222E46]/95 border-[8px] border-[#181D2A] outline outline-[4px] outline-[#93A0B4] p-8 shadow-[10px_10px_0_rgba(0,0,0,0.4)]">
                 <div className="flex flex-col gap-8">
                   <div className="font-arcade">
-                    <p className="text-[#A9B2C3] text-sm mb-1 uppercase"><PixelText text="总金币 (Total Balance)" /></p>
+                    <p className="text-[#A9B2C3] text-sm mb-1 uppercase"><PixelText text="Total Balance" /></p>
                     <h2 className="text-7xl text-[#FFD700] drop-shadow-[5px_5px_0_#000]">$1,234.56</h2>
                   </div>
 
                   <div className="flex gap-2">
                     <button onClick={() => setShowEncrypt(true)} className="bg-[#FFD700] text-black px-4 py-4 border-4 border-[#B8860B] shadow-[inset_-4px_-4px_0_rgba(0,0,0,0.3)] hover:brightness-110 active:translate-y-1 font-arcade text-[10px]">
-                      <PixelText text="初始化加密" />
+                      <PixelText text="Init encryption" />
                     </button>
                     <button onClick={() => setShowReceive(true)} className="bg-[#A9B2C3] text-black px-4 py-4 border-4 border-[#68748A] shadow-[inset_-4px_-4px_0_rgba(0,0,0,0.3)] hover:brightness-110 active:translate-y-1 font-arcade text-[10px]">
-                      <PixelText text="放入 (接收)" />
+                      <PixelText text="Receive (+)" />
                     </button>
                     <button onClick={() => setShowSend(true)} className="bg-[#A9B2C3] text-black px-4 py-4 border-4 border-[#68748A] shadow-[inset_-4px_-4px_0_rgba(0,0,0,0.3)] hover:brightness-110 active:translate-y-1 font-arcade text-[10px]">
-                      <PixelText text="拿出 (发送)" />
+                      <PixelText text="Send (↗)" />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* 资产箱子 */}
+              {/* Chest */}
               <div className="bg-[#222E46]/95 border-[8px] border-[#181D2A] outline outline-[4px] outline-[#93A0B4]">
                 <div className="p-4 border-b-[6px] border-[#181D2A] bg-black/30">
-                  <h3 className="text-white text-xl font-pixel"><PixelText text="CHEST (资产箱)" /></h3>
+                  <h3 className="text-white text-xl font-pixel"><PixelText text="CHEST" /></h3>
                 </div>
                 <div className="p-4 space-y-3">
                   {INITIAL_ASSETS.map((asset, i) => (
@@ -107,13 +107,13 @@ export default function LuvionTerrariaWalletRestore() {
             </div>
           )}
 
-          {/* ================= 视图 B：祭坛 (一键回滚核心视觉) ================= */}
+          {/* View B: Shard altar */}
           {activeTab === 'magic' && (
             <div className="bg-[#222E46]/95 border-[8px] border-[#181D2A] outline outline-[4px] outline-[#93A0B4] p-8 animate-fade-in">
 
               <div className="mb-8 border-b-4 border-[#181D2A] pb-4">
                 <h2 className="text-4xl text-white font-arcade"><PixelText text={`SHARD RECOVERY (${recoveredShards}/${totalShards})`} /></h2>
-                <p className="text-[#32CD32] text-xl mt-2 font-pixel tracking-widest"><PixelText text="门限限制: 12 (已达成可自愈)" /></p>
+                <p className="text-[#32CD32] text-xl mt-2 font-pixel tracking-widest"><PixelText text="Threshold: 12 (recovery ready)" /></p>
               </div>
 
               <div className="grid grid-cols-6 md:grid-cols-11 gap-3">
@@ -137,21 +137,21 @@ export default function LuvionTerrariaWalletRestore() {
               </div>
 
               <div className="bg-[#18202F] border-4 border-[#181D2A] p-6 mt-10">
-                <p className="text-[#A9B2C3] italic text-center text-sm font-pixel"><PixelText text="* 系统正在后台静默聚合 33 个分布在全球的网络分片。只需 12 个活跃节点在线，即可解锁完整资产控制权。" /></p>
+                <p className="text-[#A9B2C3] italic text-center text-sm font-pixel"><PixelText text="* System is aggregating 33 global shards. With 12+ nodes online, full asset control is unlocked." /></p>
               </div>
             </div>
           )}
         </div>
       </main>
 
-      {/* 通用弹窗逻辑：初始化加密 */}
+      {/* Encrypt confirmation modal */}
       {showEncrypt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
           <div className="bg-[#2E1F14] border-[8px] border-[#B8860B] p-8 max-w-sm w-full text-center">
-            <h4 className="text-[#FFD700] text-2xl mb-4 font-arcade"><PixelText text="启动量子级加密？" /></h4>
+            <h4 className="text-[#FFD700] text-2xl mb-4 font-arcade"><PixelText text="Enable quantum-grade encryption?" /></h4>
             <div className="flex gap-2">
-              <button onClick={() => setShowEncrypt(false)} className="flex-1 bg-[#FFD700] py-2 border-4 border-[#B8860B] text-black font-arcade text-[10px]"><PixelText text="确定" /></button>
-              <button onClick={() => setShowEncrypt(false)} className="flex-1 bg-gray-600 py-2 border-4 border-gray-800 text-white font-arcade text-[10px]"><PixelText text="取消" /></button>
+              <button onClick={() => setShowEncrypt(false)} className="flex-1 bg-[#FFD700] py-2 border-4 border-[#B8860B] text-black font-arcade text-[10px]"><PixelText text="Confirm" /></button>
+              <button onClick={() => setShowEncrypt(false)} className="flex-1 bg-gray-600 py-2 border-4 border-gray-800 text-white font-arcade text-[10px]"><PixelText text="Cancel" /></button>
             </div>
           </div>
         </div>

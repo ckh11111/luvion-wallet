@@ -80,7 +80,7 @@ export const Landing = () => {
 
   useEffect(() => {
     const t = setInterval(() => {
-      // demo telemetry：制造轻微跳动，增强“活的网络”观感
+      // Demo telemetry: slight jitter for live-network feel
       setLatency((l) => Math.max(120, Math.min(260, l + (Math.random() > 0.5 ? 7 : -6))));
       setActiveNodes(33);
       setStatus('Optimal');
@@ -119,7 +119,7 @@ export const Landing = () => {
               target="_blank"
               rel="noreferrer"
             >
-              白皮书（中英）
+              Whitepaper (EN+ZH)
             </a>
             <Link
               to="/assets"
@@ -145,7 +145,7 @@ export const Landing = () => {
             <h2 className="mt-6 text-lg lg:text-xl text-white/75 leading-relaxed">
               Quantum-safe. Keyless. 24-hour Revocation. Backed by a 33-node decentralized mesh.
               <span className="block mt-2 text-white/60">
-                抗量子、无助记词、24小时资产撤回。由 33 节点去中心化动态网格极致守护。
+                Same message in short: quantum-safe, keyless, 24h revocation, 33-node mesh.
               </span>
             </h2>
 
@@ -202,9 +202,9 @@ export const Landing = () => {
                     <button
                       type="button"
                       className="rounded-2xl glow-border bg-[#0B1A10] px-5 py-4 text-left hover:bg-[#0D2013] transition"
-                      onClick={() => alert('Revoke (Demo): 撤销已触发（演示）')}
+                      onClick={() => alert('Revoke (Demo): triggered.')}
                     >
-                      <div className="text-xs text-[#39ff14]/80">撤销（Revoke）</div>
+                      <div className="text-xs text-[#39ff14]/80">Revoke</div>
                       <div className="mt-2 text-lg font-semibold text-[#39ff14]">
                         Undo Now
                       </div>
@@ -244,19 +244,19 @@ export const Landing = () => {
             icon={<Timer className="h-5 w-5" />}
             title="The 24h Safety Net"
             subtitle="L-SG Asset Revocation"
-            body="转错地址？遭到钓鱼？别慌。每一笔从 Luvion 发出的交易都享有高达 24 小时的可撤销保护期。在倒计时结束前，你的资产控制权永远属于你。"
+            body="Wrong address? Phished? Every Luvion transaction has up to 24h revocation. Before the countdown ends, you keep full control."
           />
           <FeatureCard
             icon={<ShieldCheck className="h-5 w-5" />}
             title="No seed phrase. No single point of failure."
             subtitle="Trustless DKG + 33/22 MPC"
-            body="彻底告别写在纸上的助记词。Luvion 采用 33 节点动态门限共识（MPC）。你的私钥从未在世界上完整存在过，连我们都无法触碰你的资产。"
+            body="No seed phrase on paper. Luvion uses 33-node threshold consensus (MPC). Your key never exists in one place; we cannot touch your assets."
           />
           <FeatureCard
             icon={<Globe className="h-5 w-5" />}
             title="Quantum-Proof"
             subtitle="Kyber-768 + Recursive ZK"
-            body="传统钱包正在量子算力面前裸奔。Luvion 率先在链上集成 Kyber-768 抗量子算法与递归 ZK 压缩，提前十年为你构建数字资产防火墙。"
+            body="Legacy wallets are exposed to quantum compute. Luvion integrates Kyber-768 and recursive ZK on-chain, building a firewall years ahead."
           />
         </div>
       </section>
@@ -302,7 +302,7 @@ while let Some(res) = responses.next().await {
 }`}
               </pre>
               <div className="mt-4 text-sm text-white/70">
-                网络不稳定时资产释放被挂起；这不是“停服”，而是主动保护用户撤销时间。
+                When the network is unstable, release is paused — not downtime, but active protection of your revocation window.
               </div>
             </div>
           </div>
@@ -311,7 +311,7 @@ while let Some(res) = responses.next().await {
 
       <footer id="join" className="relative mx-auto max-w-6xl px-6 pb-16">
         <div className="rounded-[2.8rem] border border-white/10 bg-white/5 p-10">
-          <div className="text-2xl font-semibold">夺回你的数字主权。今天就开始。</div>
+          <div className="text-2xl font-semibold">Take back your digital sovereignty. Start today.</div>
           <div className="mt-3 text-white/70">
             Join Aegis-I Testnet to get early access. Read the whitepaper to validate the design.
           </div>
@@ -331,7 +331,7 @@ while let Some(res) = responses.next().await {
               target="_blank"
               rel="noreferrer"
             >
-              白皮书（中英） <ArrowRight className="h-5 w-5" />
+              Whitepaper (EN+ZH) <ArrowRight className="h-5 w-5" />
             </a>
             <Link
               to="/assets"

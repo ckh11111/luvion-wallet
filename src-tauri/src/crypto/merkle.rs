@@ -5,7 +5,7 @@ pub struct MerkleValidator {
 }
 
 impl MerkleValidator {
-    /// 核心拦截函数：比对碎片指纹与默克尔路径
+    /// Core check: compare shard fingerprint with Merkle path.
     pub fn validate_and_intercept(
         &self,
         shard_index: u8,
@@ -28,7 +28,7 @@ impl MerkleValidator {
     }
 }
 
-/// 供 ShardValidator 等使用的路径验证
+/// Path verification for ShardValidator etc.
 pub fn verify_path(
     root_hash: [u8; 32],
     shard_index: u8,
@@ -39,7 +39,7 @@ pub fn verify_path(
     v.validate_and_intercept(shard_index, shard_data, proof)
 }
 
-/// 分片数据哈希（供 verify_incoming_shard 等使用）
+/// Hash shard data (for verify_incoming_shard etc.).
 pub fn hash_shard(data: &[u8]) -> [u8; 32] {
     let h = Sha256::digest(data);
     let mut out = [0u8; 32];
@@ -47,7 +47,7 @@ pub fn hash_shard(data: &[u8]) -> [u8; 32] {
     out
 }
 
-/// 从叶子与路径向上推导根哈希
+/// Compute root from leaf and path.
 pub fn compute_merkle_root(
     leaf: [u8; 32],
     index: usize,
@@ -56,7 +56,7 @@ pub fn compute_merkle_root(
     merkle_compute_root(leaf, index, proof)
 }
 
-/// 对外统一入口：验证根与 proof 一致
+/// Single entry: verify root matches proof.
 pub fn verify(
     root: [u8; 32],
     index: usize,
@@ -66,7 +66,7 @@ pub fn verify(
     verify_incoming_shard(root, index, data, proof)
 }
 
-/// 验证入站分片：根与 proof 推导一致则通过，否则拦截并打日志
+/// Verify incoming shard: pass if root matches proof; else intercept and log.
 pub fn verify_incoming_shard(
     root: [u8; 32],
     index: usize,
@@ -82,7 +82,7 @@ pub fn verify_incoming_shard(
     true
 }
 
-/// 从叶子与路径向上推导根哈希（供 LuvionValidator 等使用）
+/// Compute root from leaf and path (for LuvionValidator etc.).
 pub fn merkle_compute_root(
     leaf: [u8; 32],
     _shard_index: usize,

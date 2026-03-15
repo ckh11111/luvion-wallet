@@ -1,4 +1,4 @@
-//! 罚没执行逻辑与依赖的 Stub 实现（ProofRegistry, Vault, LVNToken, MeshManager）
+//! Slashing execution and stub deps (ProofRegistry, Vault, LVNToken, MeshManager).
 
 use std::collections::HashSet;
 use std::sync::{Arc, Mutex};
@@ -6,9 +6,9 @@ use std::sync::{Arc, Mutex};
 use super::traits::{LVNTokenLike, MeshManagerLike, ProofRegistryLike, VaultLike};
 use super::types::{Address, ConsensusAuth, Signature, SlashingError};
 
-// ---------- Stub 实现（生产环境可替换为真实实现） ----------
+// ---------- Stub impl (replace in production) ----------
 
-/// 恶意记录：来自 ZKVerificationEngine 的失败报告
+/// Malicious record from ZKVerificationEngine failure reports.
 pub struct ProofRegistry {
     malicious: Mutex<HashSet<Address>>,
 }
@@ -30,7 +30,7 @@ impl ProofRegistryLike for ProofRegistry {
     }
 }
 
-/// 质押冻结与锁定
+/// Stake freeze and lock.
 pub struct Vault {
     locked: Mutex<HashSet<Address>>,
 }
@@ -52,7 +52,7 @@ impl VaultLike for Vault {
     }
 }
 
-/// 代币转入生态补偿池
+/// Token transfer to ecosystem pool.
 pub struct LVNToken;
 
 impl LVNTokenLike for LVNToken {
@@ -61,7 +61,7 @@ impl LVNTokenLike for LVNToken {
     }
 }
 
-/// 网格节点管理
+/// Mesh node management.
 pub struct MeshManager;
 
 impl MeshManagerLike for MeshManager {
@@ -70,7 +70,7 @@ impl MeshManagerLike for MeshManager {
     }
 }
 
-// ---------- 全局 Stub 实例（生产可改为注入） ----------
+// ---------- Global stub instances (inject in production) ----------
 
 fn get_proof_registry() -> Arc<ProofRegistry> {
     use std::sync::OnceLock;
@@ -84,20 +84,20 @@ fn get_vault() -> Arc<Vault> {
     V.get_or_init(|| Arc::new(Vault::new())).clone()
 }
 
-/// 核心逻辑：若检测到节点提交无效 ZK 证明，由共识层调用并强制执行罚没。
+/// Core: on invalid ZK proof from node, consensus layer calls to execute slash.
 ///
-/// # 鉴权
-/// 仅网格共识层有权调用：调用方必须持有 `ConsensusAuth`（由共识层在达成罚没共识后创建）。
+/// # Auth
+/// Only consensus layer may call; caller must hold `ConsensusAuth` (created after slash consensus).
 ///
-/// # 错误处理
-/// - 若节点已处于冻结期，返回 `SlashingError::AlreadyFrozen`，避免重复罚没。
-/// - 若节点未在恶意记录中，返回 `SlashingError::NotMalicious`。
+/// # Errors
+/// - If node already frozen: `SlashingError::AlreadyFrozen`.
+/// - If node not in malicious record: `SlashingError::NotMalicious`.
 pub async fn execute_slashing(
     _auth: ConsensusAuth,
     node_id: Address,
     stake_amount: u128,
 ) -> Result<(), SlashingError> {
-    // 1. 校验 ZK 证据的失败报告（来自 ZKVerificationEngine / ProofRegistry）
+    // 1. Check ZK failure report (from ZKVerificationEngine / ProofRegistry)
     let registry = get_proof_registry();
     let is_malicious = registry.get_malicious_record(node_id);
 
@@ -107,21 +107,21 @@ pub async fn execute_slashing(
 
     let vault = get_vault();
 
-    // 2. 检查节点是否已在冻结期，避免重复罚没
+    // 2. Check node not already frozen (no double slash)
     if vault.is_locked(node_id) {
         return Err(SlashingError::AlreadyFrozen);
     }
 
-    // 3. 冻结质押
+    // 3. Freeze stake
     vault.lock_stake(node_id);
 
-    // 4. 执行罚没：将质押的 50% 转入生态补偿池
+    // 4. Slash: transfer 50% of stake to pool
     let slash_penalty = stake_amount / 2;
     LVNToken
         .transfer_to_pool(node_id, slash_penalty)
         .map_err(SlashingError::TransferFailed)?;
 
-    // 5. 从网格中剔除节点
+    // 5. Remove node from mesh
     MeshManager
         .remove_node(node_id)
         .map_err(SlashingError::MeshRemoveFailed)?;
@@ -129,7 +129,7 @@ pub async fn execute_slashing(
     Ok(())
 }
 
-/// 共识门控罚没：仅在达到 BFT 法定人数 (2/3+1) 且所有投票签名校验通过后执行罚没。
+/// Consensus-gated slash: only after BFT quorum (2/3+1) and all vote signatures verified.
 pub async fn execute_slashing_with_consensus(
     node_id: Address,
     votes: Vec<Signature>,

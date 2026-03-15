@@ -1,8 +1,8 @@
-/// 有限域运算占位（实际可接入 GF(2^256) 等）
+/// Finite field ops placeholder (e.g. GF(2^256)).
 pub struct FiniteField;
 
 impl FiniteField {
-    /// 域上加法占位：字节逐位加后取模
+    /// Field add placeholder: byte-wise add then mod.
     pub fn add(a: &[u8], b: &[u8]) -> Vec<u8> {
         let len = a.len().max(b.len());
         let mut out = vec![0u8; len];

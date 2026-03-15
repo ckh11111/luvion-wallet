@@ -9,63 +9,63 @@ pub mod reputation;
 pub mod self_healing;
 pub mod validator;
 
-/// 占位：返回当前活跃 Peer 数量
+/// Placeholder: return current active peer count.
 pub async fn get_active_peer_count() -> u32 {
     12
 }
 
-/// 与 get_active_peer_count 一致，供 self_healing 使用
+/// Same as get_active_peer_count; used by self_healing.
 pub async fn get_live_nodes() -> u32 {
     get_active_peer_count().await
 }
 
-/// 占位：从 P2P 网格收集 n 个分片
+/// Placeholder: collect n shards from P2P mesh.
 pub async fn collect_shards_from_mesh(_n: u32) -> Vec<Vec<u8>> {
     (0.._n).map(|_| vec![0u8; 32]).collect()
 }
 
-/// 占位：将新分片通过 Gossipsub 重新分发
+/// Placeholder: redistribute new shards via Gossipsub.
 pub async fn redistribute_shards(_new_shards: Vec<Vec<u8>>) {}
 
-/// Kademlia 节点发现，内部调用 discovery::init_node_discovery
+/// Kademlia discovery; calls discovery::init_node_discovery.
 pub async fn init_kademlia_discovery() -> Result<(), Box<dyn std::error::Error>> {
     discovery::init_node_discovery().await
 }
 
-/// 占位：发现 Peer 后更新前端节点数
+/// Placeholder: update frontend peer count on discovery.
 pub async fn update_frontend_peer_count(_peer: ()) {}
 
-/// P2P 网格占位：实际可接入 libp2p SwarmBuilder + Gossipsub
+/// P2P mesh placeholder; wire libp2p SwarmBuilder + Gossipsub.
 pub async fn run_p2p_mesh() -> Result<(), Box<dyn Error>> {
     loop {
         tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
     }
 }
 
-/// 占位：通过 Gossipsub 广播分片更新
+/// Placeholder: broadcast shard update via Gossipsub.
 pub async fn broadcast_shard_update(_i: u8, _shard: &[u8]) -> Result<(), String> {
     Ok(())
 }
 
-/// 占位：检查分片共识状态是否健康（委员会规模见 LUVION_V1）
+/// Placeholder: check shard consensus health (size per LUVION_V1).
 pub async fn check_shard_consensus() -> Result<(), String> {
     Ok(())
 }
 
-/// MPC 签名流程错误
+/// MPC signing flow error.
 #[derive(Debug)]
 pub struct MPCError(pub String);
 
-/// 节点标识（与网格/链上一致）
+/// Node ID (aligned with mesh/chain).
 #[derive(Clone)]
 pub struct NodeID(pub [u8; 20]);
 
-/// 发起签名轮次前检查活跃节点数，不足则触发裂脑保护并拒绝签名
+/// Before signing round, check active nodes; if below threshold trigger split-brain protection.
 pub async fn initiate_signature_round(active_nodes: Vec<NodeID>) -> Result<(), MPCError> {
     let threshold = crate::core::config::LUVION_V1.signature_threshold;
     if active_nodes.len() < threshold {
         eprintln!(
-            "⚠️ 网络活跃度不足 ({} < {})，协议进入保护性自锁模式",
+            "Network liveness insufficient ({} < {}); protocol entering protective lock.",
             active_nodes.len(),
             threshold
         );
@@ -76,12 +76,12 @@ pub async fn initiate_signature_round(active_nodes: Vec<NodeID>) -> Result<(), M
     perform_mpc_signing(active_nodes).await
 }
 
-/// 执行 MPC 签名（占位：实际接入门限签名协议）
+/// Perform MPC signing (placeholder: wire threshold signing protocol).
 async fn perform_mpc_signing(_active_nodes: Vec<NodeID>) -> Result<(), MPCError> {
     Ok(())
 }
 
-/// 分片预取：预连接委员会规模个分片，多路复用降低握手延迟
+/// Shard prefetch: preconnect committee-sized shards to reduce latency.
 pub struct Mesh {
     pub shards: Vec<ShardHandle>,
 }
@@ -92,8 +92,8 @@ impl ShardHandle {
     pub async fn warm_up_connection(&self) {}
 }
 
-/// 为委员会分片建立预连接，减少后续签名时的网络延迟。
-/// 若提供 zk_claims，先经 Groth16 中间件校验分片声明，失败则 report_malicious_node 并返回错误。
+/// Preconnect committee shards to reduce signing latency.
+/// If zk_claims provided, verify via Groth16 first; on failure report_malicious_node and return error.
 pub async fn prepare_signing_shards(
     node_mesh: &Mesh,
     zk_engine: &crate::mpc::ZKVerificationEngine,

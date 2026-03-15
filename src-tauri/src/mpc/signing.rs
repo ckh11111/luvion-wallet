@@ -1,15 +1,15 @@
-//! 门限签名聚合：异步收集 22/33 份额，达阈值即合成
+//! Threshold signature aggregation: collect 22/33 shares asynchronously, combine when threshold reached.
 
 use crate::core::config::LUVION_V1;
 use futures::stream::{FuturesUnordered, StreamExt};
 use std::future::Future;
 use std::pin::Pin;
 
-/// 节点句柄：用于请求该节点的部分签名
+/// Handle to request a node's partial signature.
 pub struct NodeHandle(pub u32);
 
 impl NodeHandle {
-    /// 向该节点请求部分签名（占位：实际为 RPC/网络请求）
+    /// Request partial signature from this node (placeholder: real RPC/network).
     pub fn request_partial_sig(
         self,
     ) -> Pin<Box<dyn Future<Output = Result<PartialShare, SigningError>> + Send>> {
@@ -17,13 +17,13 @@ impl NodeHandle {
     }
 }
 
-/// 单节点返回的签名份额
+/// Partial signature from one node.
 pub struct PartialShare(pub Vec<u8>);
 
-/// 聚合后的最终签名
+/// Final aggregated signature.
 pub struct FinalSignature(pub Vec<u8>);
 
-/// 签名聚合错误
+/// Signing aggregation error.
 #[derive(Debug)]
 pub struct SigningError(pub String);
 
@@ -41,10 +41,10 @@ impl From<&str> for SigningError {
     }
 }
 
-/// 将收集到的份额合成为最终签名（占位：实际为门限签名协议）
+/// Combine gathered shares into final signature (placeholder: real threshold protocol).
 fn combine_shares(gathered_shares: Vec<PartialShare>) -> Result<FinalSignature, SigningError> {
     if gathered_shares.len() < LUVION_V1.signature_threshold {
-        return Err("份额不足，无法合成".into());
+        return Err("Insufficient shares to combine".into());
     }
     let mut out = Vec::new();
     for s in &gathered_shares[..LUVION_V1.signature_threshold] {
@@ -53,7 +53,7 @@ fn combine_shares(gathered_shares: Vec<PartialShare>) -> Result<FinalSignature, 
     Ok(FinalSignature(out))
 }
 
-/// 异步收集各节点部分签名，凑齐 22 个即合成并返回
+/// Collect partial signatures from nodes; combine and return when 22 reached.
 pub async fn aggregate_signature(
     partial_signatures: Vec<NodeHandle>,
 ) -> Result<FinalSignature, SigningError> {
@@ -73,10 +73,10 @@ pub async fn aggregate_signature(
         }
 
         if gathered_shares.len() >= LUVION_V1.signature_threshold {
-            println!("✅ 阈值达成：已收集 22/33 签名碎片，正在合成...");
+            println!("Threshold reached: 22/33 signature shares collected, combining...");
             return combine_shares(gathered_shares);
         }
     }
 
-    Err("❌ 严重错误：在所有节点响应后仍未凑齐 22 个合法签名".into())
+    Err("Fatal: fewer than 22 valid signatures after all nodes responded".into())
 }

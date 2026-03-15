@@ -1,33 +1,33 @@
-//! Epoch 与节点状态：Active/Standby/Slashed，VRF 轮换当值节点
+//! Epoch and node status: Active/Standby/Slashed; VRF rotates committee.
 
 use crate::p2p::NodeID;
 
-/// 节点状态
+/// Node status.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NodeStatus {
-    /// 当前当值委员会节点（规模见 LUVION_V1.committee_size）
+    /// Current committee member (size per LUVION_V1.committee_size).
     Active,
-    /// 候补节点
+    /// Standby.
     Standby,
-    /// 被罚没节点
+    /// Slashed.
     Slashed,
 }
 
-/// 质押者（用于 VRF 抽选）
+/// Staker (for VRF selection).
 #[derive(Clone)]
 pub struct Staker {
     pub node_id: NodeID,
     pub stake: u128,
 }
 
-/// Epoch 管理器：当前 epoch 与当值节点集合
+/// Epoch manager: current epoch and active set.
 pub struct EpochManager {
     pub current_epoch: u64,
     pub active_set: Vec<NodeID>,
 }
 
 impl EpochManager {
-    /// 每个 Epoch 结束时，基于 VRF 重新选择节点（委员会规模见 LUVION_V1）
+    /// At epoch end, VRF reselect nodes (committee size per LUVION_V1).
     pub fn rotate_nodes(_pool: Vec<Staker>) -> Vec<NodeID> {
         unimplemented!("VRF-based node selection logic")
     }

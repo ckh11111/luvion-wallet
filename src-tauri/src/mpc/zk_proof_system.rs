@@ -1,14 +1,14 @@
-//! 商业版：利用 ZK-SNARK (Groth16) 验证分片合法性，支持批量并行校验
+//! ZK-SNARK (Groth16) shard-claim verification; batch parallel check.
 use ark_bn254::Bn254;
 use ark_ff::PrimeField;
 use ark_groth16::{prepare_verifying_key, Groth16, PreparedVerifyingKey, Proof, VerifyingKey};
 use rayon::prelude::*;
 use std::sync::Arc;
 
-/// Bn254 标量域（公开输入类型）
+/// Bn254 scalar field (public input type).
 pub type Fr = ark_bn254::Fr;
 
-/// 从字节解析验证键（占位：生产环境需反序列化真实 VK）
+/// Parse verifying key from bytes (placeholder: deserialize real VK in production).
 fn parse_vk(raw_vk: &[u8]) -> VerifyingKey<Bn254> {
     if raw_vk.is_empty() {
         panic!("parse_vk: empty VK bytes, load real verifying key in production");
@@ -17,7 +17,7 @@ fn parse_vk(raw_vk: &[u8]) -> VerifyingKey<Bn254> {
         .unwrap_or_else(|_| panic!("parse_vk: invalid VK bytes"))
 }
 
-/// 将公开输入字节转为 Fr 数组（每段取前 32 字节按大端解释）
+/// Convert public input bytes to Fr array (first 32 bytes big-endian per segment).
 fn parse_public_inputs(public_inputs: &[Vec<u8>]) -> Vec<Fr> {
     public_inputs
         .iter()
@@ -30,26 +30,26 @@ fn parse_public_inputs(public_inputs: &[Vec<u8>]) -> Vec<Fr> {
         .collect()
 }
 
-/// ZK 验证引擎：持有预计算验证键（可选 Arc 便于多线程共享），支持单条与批量并行校验
+/// ZK verification engine: holds prepared VK (Arc for sharing); single and batch verify.
 pub struct ZKVerificationEngine {
-    /// 无 VK 时跳过验证（开发/占位）；有 VK 时用 Arc 包装便于并发共享
+    /// No VK: skip verify (dev); with VK: Arc for concurrent use.
     pub pvk: Option<Arc<PreparedVerifyingKey<Bn254>>>,
 }
 
 impl ZKVerificationEngine {
-    /// 无验证键构造（占位/开发用，始终通过）
+    /// Construct without VK (dev placeholder; always pass).
     pub fn without_vk() -> Self {
         Self { pvk: None }
     }
 
-    /// 使用给定验证键构造（生产用）
+    /// Construct with given verifying key (production).
     pub fn with_verifying_key(vk: &VerifyingKey<Bn254>) -> Self {
         Self {
             pvk: Some(Arc::new(prepare_verifying_key(vk))),
         }
     }
 
-    /// 从原始 VK 字节构造，启动阶段一次性预处理，降低校验时计算量
+    /// Construct from raw VK bytes; one-time preprocessing at startup.
     pub fn new(raw_vk: &[u8]) -> Self {
         let vk = parse_vk(raw_vk);
         let pvk = prepare_verifying_key(&vk);
@@ -58,7 +58,7 @@ impl ZKVerificationEngine {
         }
     }
 
-    /// 单条分片声明校验
+    /// Verify a single shard claim.
     pub fn verify_shard_claim(&self, proof: &Proof<Bn254>, public_inputs: &[Fr]) -> bool {
         let Some(ref pvk) = self.pvk else {
             return true;
@@ -66,7 +66,7 @@ impl ZKVerificationEngine {
         Groth16::<Bn254>::verify_proof(pvk.as_ref(), proof, public_inputs).unwrap_or(false)
     }
 
-    /// 批量并行校验分片证明：用 Rayon 线程池并行验证，将委员会规模次串行校验压缩到接近 1 次耗时
+    /// Batch-parallel verify shard proofs via Rayon; N serial checks reduced to ~1.
     pub fn verify_shard_claims_batch(
         &self,
         shards: Vec<(Proof<Bn254>, Vec<Vec<u8>>)>,
@@ -83,13 +83,13 @@ impl ZKVerificationEngine {
             });
         if !all_valid {
             #[cfg(debug_assertions)]
-            eprintln!("⚠️ 警告：检测到无效的 ZK 分片证明，立即触发协议自愈！");
+            eprintln!("Invalid ZK shard proof detected; trigger protocol self-heal.");
         }
         all_valid
     }
 
-    /// 聚合验证：将多个 proof 聚合后做一次常数级验证（生产环境可用递归电路实现）。
-    /// 当前为占位实现：逐条验证，全部通过则返回 true；真实部署可替换为 RecursiveSnark 聚合。
+    /// Aggregate verify: combine proofs for O(1) check (production: recursive circuit).
+    /// Placeholder: verify one by one; all pass then true.
     pub fn aggregate_and_verify(&self, proofs: Vec<Proof<Bn254>>) -> bool {
         let Some(ref pvk) = self.pvk else {
             return !proofs.is_empty();
@@ -97,13 +97,13 @@ impl ZKVerificationEngine {
         if proofs.is_empty() {
             return false;
         }
-        // 占位：真实实现应使用 RecursiveSnark::prove_aggregation(proofs) 得到单一 proof 再验证
+        // Placeholder: real impl uses RecursiveSnark::prove_aggregation(proofs) then verify once
         let all_valid = proofs
             .iter()
             .all(|p| Groth16::<Bn254>::verify_proof(pvk.as_ref(), p, &[]).unwrap_or(false));
         if !all_valid {
             #[cfg(debug_assertions)]
-            eprintln!("⚠️ 聚合验证：存在无效证明");
+            eprintln!("Aggregate verify: invalid proof present.");
         }
         all_valid
     }

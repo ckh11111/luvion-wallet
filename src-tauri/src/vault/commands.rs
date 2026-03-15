@@ -31,7 +31,7 @@ pub async fn cmd_trigger_biometric_2fa() -> Result<bool, String> {
     Ok(true)
 }
 
-/// 通知 18 个分片节点开始监听链上 Stealth 事件，资金进入隐私地址时节点同步通知前端
+/// Notify shard nodes to listen for on-chain Stealth events; sync to frontend when funds arrive.
 #[tauri::command]
 pub async fn start_receive_monitor() -> Result<String, String> {
     Ok("Monitoring Active".into())
@@ -47,34 +47,34 @@ pub async fn cmd_generate_emergency_kit() -> Result<String, String> {
     backup::generate_emergency_kit()
 }
 
-/// 生产环境：系统原生指纹/面容，通过后才允许 18 节点分片重组
+/// Production: system biometric; only then allow shard resharing.
 #[tauri::command]
 pub async fn authenticate_biometric() -> Result<bool, String> {
     #[cfg(target_os = "macos")]
     {
-        // 接入 touchid 时: touchid::auth::authenticate("Luvion: 验证生物特征以授权 18 节点分片重组").map(|_| true).map_err(|e| e.to_string())
-        let _ = "Luvion: 验证生物特征以授权 18 节点分片重组";
+        // When using touchid: touchid::auth::authenticate("Luvion: verify biometric to authorize shard resharing").map(|_| true).map_err(|e| e.to_string())
+        let _ = "Luvion: verify biometric to authorize shard resharing";
         Ok(true)
     }
     #[cfg(not(target_os = "macos"))]
     {
-        Ok(true) // 其他系统暂回退至成功，或对接 Windows Hello
+        Ok(true) // Fallback for other systems or Windows Hello
     }
 }
 
-/// 系统级原生认证：macOS 弹 Touch ID/面容，Windows 走 Hello
+/// System-native auth: macOS Touch ID/Face, Windows Hello.
 #[tauri::command]
 pub async fn authenticate_user() -> Result<bool, String> {
     #[cfg(target_os = "macos")]
     {
-        // 接入 touchid 时可改为: touchid::auth::authenticate("Luvion: 验证身份以授权分片重组")
-        let _ = "Luvion: 验证身份以授权分片重组";
+        // When using touchid: touchid::auth::authenticate("Luvion: verify identity to authorize shard resharing")
+        let _ = "Luvion: verify identity to authorize shard resharing";
         Ok(true)
     }
 
     #[cfg(target_os = "windows")]
     {
-        // Windows Hello API 占位
+        // Windows Hello API placeholder
         Ok(true)
     }
 
@@ -99,7 +99,7 @@ pub async fn cmd_check_nodes() -> Result<Vec<serde_json::Value>, String> {
     Ok(nodes)
 }
 
-/// 一行创建安全金库：owner 地址，security 等级（Standard / Institutional / Quantum-Safe），revocation 如 "24h"
+/// One-call create vault: owner, security tier (Standard/Institutional/Quantum-Safe), revocation e.g. "24h".
 #[tauri::command]
 pub async fn cmd_create_vault(owner: String, security: String, _revocation: String) -> Result<String, String> {
     let tier = match security.as_str() {
@@ -109,6 +109,6 @@ pub async fn cmd_create_vault(owner: String, security: String, _revocation: Stri
         _ => crate::sdk::SecurityTier::Standard,
     };
     let addr = crate::sdk::LuvionSDK::create_vault(tier).await;
-    let _ = owner; // 后续可绑定 owner 与金库
+    let _ = owner; // TODO: bind owner to vault
     Ok(addr.to_string())
 }

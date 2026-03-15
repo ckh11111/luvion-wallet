@@ -1,6 +1,6 @@
 use crate::crypto::sss::Shard;
 
-/// 有限域大素数占位（实际可用 2^127-1 或 NIST 素数）
+/// Field prime placeholder (e.g. 2^127-1 or NIST prime).
 pub const FIELD_PRIME: u128 = (1u128 << 127) - 1;
 
 trait AddMod {
@@ -12,7 +12,7 @@ impl AddMod for u128 {
     }
 }
 
-/// 执行 MPC 同态加法：f'(i) = f(i) + g(i)
+/// MPC homomorphic add: f'(i) = f(i) + g(i).
 pub fn mpc_refresh_shard(original: &Shard, zero_contribution: &Shard) -> Shard {
     assert_eq!(original.index, zero_contribution.index, "Index mismatch");
     let refreshed_value = (original.value + zero_contribution.value) % FIELD_PRIME;
@@ -22,7 +22,7 @@ pub fn mpc_refresh_shard(original: &Shard, zero_contribution: &Shard) -> Shard {
     }
 }
 
-/// 盲刷新：f'(i) = f(i) + g(i)，g(0)=0，内存中不合成完整私钥
+/// Blind refresh: f'(i)=f(i)+g(i), g(0)=0; no full key in memory.
 pub fn mpc_reshard_blind(original_shard: &Shard, zero_poly_shard: &Shard) -> Shard {
     assert_eq!(original_shard.index, zero_poly_shard.index);
     let refreshed_value = original_shard.value.add_mod(&zero_poly_shard.value, &FIELD_PRIME);
@@ -32,7 +32,7 @@ pub fn mpc_reshard_blind(original_shard: &Shard, zero_poly_shard: &Shard) -> Sha
     }
 }
 
-/// 占位：门限/委员会节点协作签名，不还原私钥（规模见 LUVION_V1）
+/// Placeholder: threshold/committee sign without reconstructing key (size per LUVION_V1).
 pub async fn sign_transaction(
     _amount: f64,
     _to_addr: String,
@@ -41,12 +41,12 @@ pub async fn sign_transaction(
     Ok(b"signed_tx_mpc".to_vec())
 }
 
-/// 占位：生物识别通过后合并分布式签名
+/// Placeholder: after biometric, merge distributed signatures.
 pub async fn finalize_distributed_signature(_tx_id: String) -> Result<String, String> {
     Ok("0x_final_sig".to_string())
 }
 
-/// 占位：协调门限/委员会分片完成签名
+/// Placeholder: coordinate threshold/committee shards to complete signing.
 pub async fn coordinate_sign(_amount: f64, _address: String) -> Result<String, String> {
     Ok("0x_tx_hash".to_string())
 }

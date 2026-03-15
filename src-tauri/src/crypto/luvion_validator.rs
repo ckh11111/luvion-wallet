@@ -2,7 +2,7 @@ use sha2::{Digest, Sha256};
 
 use super::merkle;
 
-/// 使用数字指纹锁定 18 个碎片的状态
+/// Lock state of shards via fingerprint.
 pub struct LuvionValidator {
     pub root: [u8; 32],
 }
@@ -15,7 +15,7 @@ fn hash(data: &[u8]) -> [u8; 32] {
 }
 
 impl LuvionValidator {
-    /// 验证逻辑：证明拿回的 shard_data 确实是原始分片中的第 i 个
+    /// Verify that shard_data is the i-th original shard.
     pub fn verify(
         &self,
         shard_index: usize,
