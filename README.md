@@ -40,4 +40,4 @@ We are looking for security researchers and protocol engineers to audit our revo
 
 ## License
 
-MIT License
+CC BY-NC-ND 4.0
