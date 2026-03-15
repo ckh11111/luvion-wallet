@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // Mock asset data
 const INITIAL_ASSETS = [
@@ -143,6 +143,28 @@ export default function LuvionTerrariaWalletRestore() {
           )}
         </div>
       </main>
+
+      {/* Receive modal */}
+      {showReceive && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="bg-[#2E1F14] border-[8px] border-[#B8860B] p-8 max-w-sm w-full text-center">
+            <h4 className="text-[#FFD700] text-2xl mb-4 font-arcade"><PixelText text="Receive" /></h4>
+            <p className="text-[#A9B2C3] text-sm mb-4 font-pixel"><PixelText text="Share your address to receive assets." /></p>
+            <button onClick={() => setShowReceive(false)} className="w-full bg-[#FFD700] py-2 border-4 border-[#B8860B] text-black font-arcade text-[10px]"><PixelText text="Close" /></button>
+          </div>
+        </div>
+      )}
+
+      {/* Send modal */}
+      {showSend && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="bg-[#2E1F14] border-[8px] border-[#B8860B] p-8 max-w-sm w-full text-center">
+            <h4 className="text-[#FFD700] text-2xl mb-4 font-arcade"><PixelText text="Send" /></h4>
+            <p className="text-[#A9B2C3] text-sm mb-4 font-pixel"><PixelText text="Enter amount and recipient (coming soon)." /></p>
+            <button onClick={() => setShowSend(false)} className="w-full bg-[#FFD700] py-2 border-4 border-[#B8860B] text-black font-arcade text-[10px]"><PixelText text="Close" /></button>
+          </div>
+        </div>
+      )}
 
       {/* Encrypt confirmation modal */}
       {showEncrypt && (

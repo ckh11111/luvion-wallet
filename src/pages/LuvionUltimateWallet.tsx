@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // 1. 模拟资产数据
 const INITIAL_ASSETS = [

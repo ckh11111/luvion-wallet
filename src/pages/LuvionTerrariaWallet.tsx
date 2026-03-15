@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function LuvionTerrariaWallet() {
   const [activeTab, setActiveTab] = useState('inventory'); // 'inventory' (资产) 或 'magic' (分片自愈)

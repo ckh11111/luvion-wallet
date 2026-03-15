@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // 为了确保汉字也是像素风，我们直接把汉字用 Unicode 的 monospace 字符集“伪装”出来
 // 这样在 VT323 字体下会有更好的像素感

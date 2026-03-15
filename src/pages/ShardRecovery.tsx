@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLuvionNetwork } from '../hooks/useLuvionNetwork';
 
 export const ShardRecovery = () => {

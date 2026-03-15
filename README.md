@@ -21,7 +21,7 @@ Traditional crypto wallets suffer from a critical single point of failure: once 
 - **React & Tailwind CSS**: The front end handles real-time asset state and dynamic display of node recovery (e.g. shard status).
 
 ### 2. Security & Consensus
-- **Shard Recovery**: Implemented in the app routing and recovery flows (see `App.tsx` and related pages). A threshold decryption flow runs when the network reaches 12/33 active shards, at which point recovery is triggered.
+- **Shard Recovery**: Implemented in the app routing and recovery flows (see `App.tsx` and related pages). Recovery UI uses a 12/33 display; the backend consensus uses 33 nodes with a 22 signature threshold (2/3+1) per `src-tauri/src/core/config.rs`.
 - **Distributed Consensus**: The `consensus/` directory contains P2P discovery and distributed verification, eliminating single points of failure.
 - **Quantum-Safe Storage**: Post-quantum crypto is used at the storage layer; all asset entries are cryptographically hardened.
 

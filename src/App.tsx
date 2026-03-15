@@ -19,7 +19,7 @@ const AppContent = () => {
       clearInterval(timerNodes);
       clearInterval(timerBalances);
     };
-  }, []);
+  }, [isLanding]);
 
   if (isLanding) {
     return (
