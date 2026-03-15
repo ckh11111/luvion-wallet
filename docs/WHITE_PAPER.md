@@ -8,9 +8,13 @@
 
 ## Abstract / 摘要
 
-Luvion is an enterprise-grade, non-custodial asset management protocol that replaces the single private-key paradigm with a **distributed-compute-based sovereignty** model. By combining **Threshold Multi-Party Computation (MPC)** with **Post-Quantum Cryptography (PQC)** and **Zero-Knowledge Fault Proofs (ZK-Fault Proofs)**, Luvion eliminates single points of failure, hardens against future quantum adversaries, and provides verifiable integrity of every signature shard without revealing secret material. A **self-healing node mesh** with proactive resharing and ZK-verified shard claims sets a new standard for institutional-grade digital asset security.
+Luvion is the world’s first security middleware that integrates **post-quantum algorithms** with a **decentralized revocation protocol**. Through **distributed threshold signing (MPC)** and the **L-SG revocation mechanism**, we build a “last 24 hours” safety net for Web3 assets, eliminating the risk of total loss from single-point private-key failure.
 
-Luvion 是一个企业级、非托管的资产管理协议，以**基于分布式计算的主权**模型取代单一私钥范式。通过将**门限多方安全计算（MPC）**与**后量子密码学（PQC）**及**零知识故障证明（ZK-Fault Proofs）**相结合，Luvion 消除了单点故障、抵御未来量子攻击，并在不泄露秘密材料的前提下为每一份签名分片提供可验证的完整性。具备主动重组与 ZK 校验分片声明的**自愈节点网格**，为机构级数字资产安全树立了新标准。
+Luvion 是全球首个集成**抗量子算法**与**去中心化撤销协议**的安全中间件。我们通过分布式门限签名技术（MPC）与 L-SG 撤销机制，为 Web3 资产构建「最后 24 小时」的防护网，彻底终结私钥单点故障导致的资产清零风险。
+
+The protocol is an enterprise-grade, non-custodial asset layer that replaces the single private-key paradigm with a **distributed-compute-based sovereignty** model. By combining **Threshold MPC** with **PQC** and **ZK-Fault Proofs**, Luvion eliminates single points of failure, hardens against quantum adversaries, and provides verifiable integrity of every signature shard. A **self-healing node mesh** with proactive resharing and ZK-verified shard claims sets a new standard for institutional-grade digital asset security.
+
+本协议为企业级、非托管资产层，以**基于分布式计算的主权**模型取代单一私钥范式；通过门限 MPC、PQC 与 ZK-Fault Proofs 消除单点故障、抵御量子威胁，并为每份签名分片提供可验证完整性；具备主动重组与 ZK 校验的**自愈节点网格**，为机构级数字资产安全树立新标准。
 
 ---
 
@@ -52,7 +56,13 @@ Traditional wallets and many institutional custodians rely on **monolithic key s
 
 **Shor 算法**（及其变体）威胁所有广泛部署的**椭圆曲线与 RSA**密码学。一旦大规模量子计算机出现，当前密钥协商与数字签名将不再安全。**后量子迁移**必须从设计阶段就纳入授权与密钥派生层，而非事后修补。
 
-### 2.3 Trust and Verifiability
+### 2.3 Consensus and Liveness Risk
+
+Centralized or low-node-count custody schemes are highly vulnerable to **DDoS and targeted outages**: once the signing quorum is unreachable, the system halts and user operations freeze. Luvion’s **33-node dynamic committee** and **liveness-dependent lock** ensure that consensus-layer attacks cannot shorten the revocation window—they can only prolong the locked state, preserving user recovery time.
+
+中心化或低节点数的安全方案在 **DDoS 攻击**下极易陷入**共识停服**：一旦签名法定人数不可达，系统瘫痪、用户操作冻结。Luvion 的 **33 节点动态委员会**与**活性依赖锁**确保针对共识层的攻击无法缩短撤销期，只会延长资产锁定，为用户保留充足撤销时间。
+
+### 2.4 Trust and Verifiability
 
 In a distributed signing system, **malicious or faulty nodes** may submit invalid shards. Without cryptographic verification, the coordinator cannot distinguish honest computation from forgery. **Zero-knowledge proofs** allow the network to verify that each shard was produced by a valid circuit execution—without revealing the shard’s secret content—enabling **fault isolation** and **malicious-node reporting**.
 
@@ -64,8 +74,8 @@ In a distributed signing system, **malicious or faulty nodes** may submit invali
 
 Luvion implements a **sovereign asset fortress** with three pillars:
 
-1. **Threshold MPC (18/10)**  
-   The “key” is never materialized. Signing requires a **quorum of 10 from 18** geographically and logically distributed nodes. No single node (including the user device) holds a full key; reconstruction is performed only in a **secure multi-party protocol** that outputs a signature, not a key.
+1. **Threshold MPC (33/22)**  
+   The “key” is never materialized. Signing requires a **quorum of 22 from 33** geographically and logically distributed nodes (DVC). No single node (including the user device) holds a full key; reconstruction is performed only in a **secure multi-party protocol** that outputs a signature, not a key.
 
 2. **Post-Quantum Hardening (PQC)**  
    The primary authorization and key-establishment layer uses **NIST-standardized post-quantum primitives** (e.g. **Kyber-768** for KEM). This ensures that even if an adversary gains classical access to the system, future quantum capability cannot retroactively break the authorization design.
@@ -74,12 +84,12 @@ Luvion implements a **sovereign asset fortress** with three pillars:
    Every signature shard submitted to the coordinator is accompanied by a **Groth16 ZK-SNARK proof** over a fixed circuit (e.g. on **Bn254**). The verifier checks the proof and public inputs; failure triggers **malicious-node reporting** and exclusion from the signing set. Thus, **shard integrity** is enforced without exposing secret material.
 
 4. **Self-Healing Mesh**  
-   A **heartbeat monitor** periodically scans the 18-node mesh. When a node is detected offline or unresponsive, the protocol triggers **proactive resharing** so that the effective threshold remains satisfiable with the live set. Combined with P2P discovery (e.g. **Kademlia**) and overlay broadcast (e.g. **Gossipsub**), the mesh maintains liveness and consistency.
+   A **heartbeat monitor** periodically scans the 33-node mesh. When a node is detected offline or unresponsive, the protocol triggers **proactive resharing** so that the effective threshold remains satisfiable with the live set. Combined with P2P discovery (e.g. **Kademlia**) and overlay broadcast (e.g. **Gossipsub**), the mesh maintains liveness and consistency.
 
 5. **Institutional Safeguards**  
    **L-SG (SafeGuard™)** provides time-locked, physical-seed recovery (e.g. QR-code shards). A **risk-preview engine** performs real-time transaction simulation to block high-risk contract interactions. When the number of active peers falls below the threshold, **hardened local storage** (e.g. TPM or Secure Enclave) is used to re-encrypt local shard material.
 
-Luvion 通过三大支柱实现**主权资产堡垒**：门限 MPC（18/10）、PQC 加固（如 Kyber-768）、Groth16 ZK-Fault Proofs、心跳驱动的自愈网格，以及 L-SG 与风险预览等机构级防护。
+Luvion 通过三大支柱实现**主权资产堡垒**：门限 MPC（33/22）、PQC 加固（如 Kyber-768）、Groth16 ZK-Fault Proofs、心跳驱动的自愈网格，以及 L-SG 与风险预览等机构级防护。
 
 ### 3.2 Dynamic Verification Committee (DVC) / 动态验证委员会（DVC）
 
@@ -120,8 +130,17 @@ If the current 33-node committee experiences excessive delay or partial outage, 
 
 若 33 个活跃节点中超过 $f=11$ 个节点出现高延迟或不可用，系统将触发**视图切换（View Change）**机制：
 
-* **触发条件**：当活跃集合出现超过 $f=11$ 的延迟/失活节点。
-* **重新调度**：重选在线节点并重建可用法定人数，保证服务高可用性（Liveness）。
+* **触发条件**：当活跃集合出现超过 $f=11$ 的延迟/失活节点；或当前委员会在 **5 秒**内无法达成共识时自动触发 View Change。
+* **重新调度**：候补池节点立即介入，重组新的 33 节点委员会，实现共识的秒级恢复（Liveness）。
+
+### 3.5 Asynchronous Threshold Waiting / 异步阈值等待机制
+
+To handle global network latency without blocking on the slowest node, Luvion uses **asynchronous threshold aggregation**:
+
+* **Threshold-first completion**: The signature aggregator **completes as soon as the first 22** valid partial signatures (shares) are collected—it does **not** wait for all 33 responses.
+* **Performance**: This masks long-tail latency; **average signing latency** is kept stable within **250ms** under normal conditions.
+
+为解决全球网络波动，Luvion 实现非阻塞签名流程：签名聚合器在收集到前 **22 个**（而非全部 33 个）合法碎片后**立即合成**最终签名；有效屏蔽长尾延迟，使平均签名时延稳定在 **250ms** 以内。
 
 ---
 
@@ -129,14 +148,14 @@ If the current 33-node committee experiences excessive delay or partial outage, 
 
 ### 4.1 Threshold MPC and Sharding
 
-- **Model**: **18 nodes**, **threshold 10** (18/10). A valid signature is produced only when at least 10 nodes contribute correct partial signatures (or shards) to a **threshold signature scheme**.
-- **Key material**: The “master” secret is split using **Shamir-style secret sharing** (or equivalent) into 18 shards. Each shard is stored at a distinct node; **no node** has access to more than one shard in the intended deployment.
-- **Signing path**: The protocol **never reconstructs** the full private key. Signing is performed via **multi-party computation**: each node computes a partial signature over the message; a **combiner** (or distributed protocol) produces the final signature from at least 10 valid partials.
+- **Model**: **33 nodes** (DVC), **threshold 22** (33/22). A valid signature is produced only when at least 22 nodes contribute correct partial signatures (or shards) to a **threshold signature scheme**.
+- **Key material**: The “master” secret is split using **Shamir-style / DKG** into 33 shards. Each shard is stored at a distinct node; **no node** has access to more than one shard in the intended deployment.
+- **Signing path**: The protocol **never reconstructs** the full private key. Signing is performed via **multi-party computation**: each node computes a partial signature over the message; a **combiner** (or distributed protocol) produces the final signature from at least 22 valid partials (see §3.5 asynchronous threshold waiting).
 - **BIP44 / HD**: Shard-derived material supports **path-based derivation** (e.g. BIP44) so that different chains (e.g. Ethereum, Solana) can be addressed from the same MPC root without re-sharing.
 
-- **模型**：**18 节点**，**门限 10**（18/10）。仅当至少 10 个节点向**门限签名方案**贡献正确部分签名（分片）时，才产生有效签名。  
-- **密钥材料**：主密钥通过**类 Shamir 秘密共享**拆分为 18 份，每份存于不同节点；**无节点**在预期部署中持有超过一份。  
-- **签名路径**：协议**从不重组**完整私钥；签名通过**多方计算**完成：各节点对消息计算部分签名，**合成器**（或分布式协议）从至少 10 个有效部分生成最终签名。  
+- **模型**：**33 节点**（DVC），**门限 22**（33/22）。仅当至少 22 个节点向**门限签名方案**贡献正确部分签名（分片）时，才产生有效签名。  
+- **密钥材料**：主密钥通过**类 Shamir / DKG** 拆分为 33 份，每份存于不同节点；**无节点**在预期部署中持有超过一份。  
+- **签名路径**：协议**从不重组**完整私钥；签名通过**多方计算**完成；合成器从至少 22 个有效部分生成最终签名（见 §3.5 异步阈值等待）。  
 - **BIP44 / HD**：分片派生支持**路径派生**（如 BIP44），以便从同一 MPC 根派生出多链地址而无需重新分片。
 
 ### 4.2 Post-Quantum Cryptography (PQC)
@@ -163,27 +182,29 @@ If the current 33-node committee experiences excessive delay or partial outage, 
 
 ### 4.4 Self-Healing Mesh and Proactive Resharing
 
-- **Topology**: 18 nodes form a **P2P mesh** with discovery via **Kademlia** (DHT) and broadcast via **Gossipsub** (or equivalent). Shard updates and resharing messages are propagated through this overlay.
+- **Topology**: 33 nodes (DVC) form a **P2P mesh** with discovery via **Kademlia** (DHT) and broadcast via **Gossipsub** (or equivalent). Shard updates and resharing messages are propagated through this overlay.
 - **Heartbeat**: A **heartbeat monitor** runs at a fixed interval (e.g. 5 seconds). It **scans** the mesh (e.g. `scan_node_mesh`) and marks nodes that do not respond as **offline**.
-- **Proactive resharing**: For each node detected **offline**, the protocol invokes **trigger_shard_resharing(node_id)**. This initiates a **proactive resharing** protocol so that the remaining live nodes obtain new shards and the threshold (10) remains achievable without the failed node. No full key is ever reconstructed; resharing is done in a distributed manner.
-- **Consensus and liveness**: The system periodically **checks shard consensus** (`check_shard_consensus`) and **redistributes shards** (`redistribute_shards`) after resharing. This keeps the mesh in a **consistent and available** state despite churn.
+- **Proactive resharing**: For each node detected **offline**, the protocol invokes **trigger_shard_resharing(node_id)**. This initiates **proactive resharing** so that the remaining live nodes obtain new shards and the threshold (22) remains achievable. No full key is ever reconstructed; resharing is done in a distributed manner.
+- **Consensus and liveness**: The system periodically **checks shard consensus** and **redistributes shards** after resharing. This keeps the mesh in a **consistent and available** state despite churn.
 
-- **拓扑**：18 节点构成 **P2P 网格**，通过 **Kademlia**（DHT）发现、通过 **Gossipsub** 广播；分片更新与重组消息经该覆盖网传播。  
-- **心跳**：**心跳监控**按固定周期（如 5 秒）运行，**扫描**网格（如 `scan_node_mesh`），将无响应的节点标记为**离线**。  
-- **主动重组**：对每个判定为**离线**的节点，协议调用 **trigger_shard_resharing(node_id)**，启动**主动重组**，使存活节点获得新分片且门限（10）在无故障节点时仍可满足；全程不重组完整密钥。  
-- **共识与活性**：系统定期**检查分片共识**并在重组后**重新分发分片**，在节点流失下仍保持**一致与可用**。
+- **拓扑**：33 节点（DVC）构成 **P2P 网格**，通过 **Kademlia** 发现、**Gossipsub** 广播；分片更新与重组经该覆盖网传播。  
+- **心跳**：**心跳监控**按固定周期（如 5 秒）运行，**扫描**网格，将无响应的节点标记为**离线**。  
+- **主动重组**：对每个判定为**离线**的节点，协议调用 **trigger_shard_resharing**，使存活节点获得新分片且门限（22）仍可满足；全程不重组完整密钥。  
+- **共识与活性**：系统定期检查分片共识并在重组后重新分发分片，在节点流失下保持一致与可用。
 
 ### 4.5 Institutional Safeguards
 
-- **L-SG (SafeGuard™) Recovery**: A **time-locked recovery** protocol with **physical seed shards** (e.g. QR-code printed or engraved). Recovery requires both the time lock to expire and the physical shards to be combined in a controlled environment. This mitigates remote coercion and single-device loss.
-- **Risk-Preview Engine**: Before any transaction is broadcast, a **sandboxed simulation** (e.g. `cmd_simulate_transaction`) runs. High-risk patterns (e.g. unlimited approvals, unknown contracts) are flagged; the user must explicitly confirm or abort. This reduces **approval and phishing** risks.
-- **Hardened Local Storage**: When the number of **active peers** drops below the **threshold** (e.g. 10), the client triggers **hardened_local_storage**: local shard material is **re-encrypted** using **TPM** or **Secure Enclave** (or equivalent). This limits exposure if the mesh is temporarily degraded.
+- **L-SG (SafeGuard™) Recovery**: A **time-locked recovery** protocol (default **24h** revocation window) with **physical seed shards** (e.g. QR-code). Recovery requires the time lock to expire and physical shards to be combined in a controlled environment. **Revocation commands** use **Kyber-768** so they remain secure in the quantum era. This mitigates remote coercion and single-device loss.
+- **Liveness-Dependent Lock (活性依赖锁)**: When the network status is **not Optimal** (e.g. active nodes &lt; 22, or View Change in progress), the **asset release countdown is suspended**. Attackers cannot shorten the revocation window—they can only prolong the locked state, ensuring users always have sufficient time to revoke.
+- **Risk-Preview Engine**: Before any transaction is broadcast, a **sandboxed simulation** (e.g. `cmd_simulate_transaction`) runs. High-risk patterns are flagged; the user must explicitly confirm or abort. This reduces **approval and phishing** risks.
+- **Hardened Local Storage**: When the number of **active peers** drops below the **threshold** (22), the client triggers **hardened_local_storage**: local shard material is **re-encrypted** using **TPM** or **Secure Enclave**. This limits exposure if the mesh is temporarily degraded.
 - **Biometric and 2FA**: Critical actions (e.g. withdrawal) require **biometric authentication** (e.g. Touch ID / Face ID) and optional **2FA**, ensuring that even with device access, signing requires user presence.
 
-- **L-SG (SafeGuard™) 恢复**：**时间锁恢复**协议与**物理种子分片**（如二维码打印或刻录）。恢复需同时满足时间锁到期与在受控环境中合并物理分片，以减轻远程胁迫与单设备丢失风险。  
-- **风险预览引擎**：在交易广播前运行**沙盒仿真**（如 `cmd_simulate_transaction`）。高风险模式（如无限授权、未知合约）被标记，用户需显式确认或中止，以降低**授权与钓鱼**风险。  
-- **加固本地存储**：当**活跃节点**数低于**门限**（如 10）时，客户端触发 **hardened_local_storage**：本地分片材料通过 **TPM** 或 **Secure Enclave**（或等价物）**再加密**，在网格暂时退化时限制暴露面。  
-- **生物识别与 2FA**：关键操作（如提现）需**生物识别**（如 Touch ID / Face ID）及可选 **2FA**，确保即便设备被访问，签名仍依赖用户在场。
+- **L-SG (SafeGuard™) 恢复**：**时间锁恢复**（默认 **24 小时**撤销窗口）与**物理种子分片**（如二维码）。撤销指令采用 **Kyber-768** 抗量子加固。恢复需同时满足时间锁到期与在受控环境中合并物理分片。  
+- **活性依赖锁**：若活跃节点数降至 22 以下或进入视图切换状态，资产释放倒计时将**物理挂起**；网络攻击无法缩短撤销期，只会延长锁定，确保用户在任何极端环境下都有充足撤销时间。  
+- **风险预览引擎**：在交易广播前运行**沙盒仿真**。高风险模式被标记，用户需显式确认或中止。  
+- **加固本地存储**：当**活跃节点**数低于**门限**（22）时，客户端触发 **hardened_local_storage**：本地分片通过 TPM 或 Secure Enclave 再加密。  
+- **生物识别与 2FA**：关键操作需**生物识别**及可选 **2FA**，确保签名依赖用户在场。
 
 ---
 
@@ -191,19 +212,19 @@ If the current 33-node committee experiences excessive delay or partial outage, 
 
 | Threat | Mitigation |
 |--------|------------|
-| **Single node compromise** | No full key; threshold 10/18; ZK verification rejects invalid shards. |
+| **Single node compromise** | No full key; threshold 22/33; ZK verification rejects invalid shards. |
 | **Quantum adversary** | PQC (Kyber-768) in authorization; design allows replacement of classical components. |
 | **Malicious or faulty shard** | Groth16 ZK-Fault Proof per shard; failure → `report_malicious_node` and exclusion. |
-| **Network partition / node churn** | Heartbeat + proactive resharing; mesh self-heals; hardened storage when below threshold. |
+| **Network partition / node churn** | Heartbeat + proactive resharing; mesh self-heals; **liveness-dependent lock** and hardened storage when below threshold. |
 | **Phishing / approval abuse** | Risk-preview engine; sandboxed simulation; explicit user confirmation. |
 | **Device loss** | L-SG time-lock + physical shards; no single device holds recoverable full key. |
 
 | 威胁 | 缓解措施 |
 |------|------------|
-| **单节点沦陷** | 无完整密钥；10/18 门限；ZK 验证拒绝无效分片。 |
+| **单节点沦陷** | 无完整密钥；22/33 门限；ZK 验证拒绝无效分片。 |
 | **量子敌手** | 授权层 PQC（Kyber-768）；设计支持替换经典组件。 |
 | **恶意或故障分片** | 每分片 Groth16 ZK-Fault Proof；失败 → 上报恶意节点并排除。 |
-| **网络分区/节点流失** | 心跳 + 主动重组；网格自愈；低于门限时加固存储。 |
+| **网络分区/节点流失** | 心跳 + 主动重组；网格自愈；**活性依赖锁**及低于门限时加固存储。 |
 | **钓鱼/授权滥用** | 风险预览引擎；沙盒仿真；用户显式确认。 |
 | **设备丢失** | L-SG 时间锁 + 物理分片；单设备无法恢复完整密钥。 |
 
@@ -224,6 +245,14 @@ Stake_{min} = \alpha \cdot \frac{TVL}{N}
 \]
 
 其中 \(\alpha\) 为安全系数，目标是确保节点作恶的经济成本始终保持在潜在获利的 **300% 以上**。
+
+### 5.3 Tokenomics / 代币经济学
+
+* **$LVN 质押**：节点须通过质押 $LVN 获取委员会抽选权重；作恶将面临 **Slashing（罚没）**。
+* **动态质押系数**：最低质押额度与保护的 TVL 挂钩（见 §5.2），确保攻击成本始终 &gt; 潜在收益的 300%。
+
+* **$LVN Staking**: Nodes must stake $LVN to obtain committee selection weight; misbehavior leads to **Slashing**.
+* **Dynamic staking coefficient**: Minimum stake scales with secured TVL (§5.2), keeping attack cost above 300% of potential profit.
 
 ---
 
@@ -249,9 +278,9 @@ No slashing takes effect on a single authority’s say. Any slashing decision mu
 
 ### 6.4 Quorum & Split-Brain Protection / 强制法定人数与防裂脑保护
 
-When the number of **active nodes** falls below 51% of the network (*N &lt; 10*), the system enters **protective lock mode** and **rejects all signing requests**. This prevents double-spend under network partition and keeps **global cross-region consistency**.
+When the number of **active nodes** falls below the **signature threshold** (*N &lt; 22*), the system enters **protective lock mode** and **rejects all signing requests**. This prevents double-spend under network partition and keeps **global cross-region consistency**.
 
-当活跃节点数低于全网 51%（*N &lt; 10*）时，系统自动进入“保护性自锁模式”，拒绝任何签名请求。此机制杜绝了网络分割产生的“双花”悖论，确保了全球跨地域节点的数据绝对一致性。
+当活跃节点数低于**签名门限**（*N &lt; 22*）时，系统自动进入“保护性自锁模式”，拒绝任何签名请求。此机制杜绝了网络分割产生的“双花”悖论，确保了全球跨地域节点的数据绝对一致性。
 
 ### 6.5 Multi-channel Async Revocation / 多路径异步撤销
 
@@ -265,17 +294,17 @@ To counter DDoS or social-engineering attacks, the **L-SG protocol** supports **
 
 | Phase | Milestone | Objective |
 |:------|:----------|:----------|
-| **I** | **Core MPC** | 18-node threshold implementation; Shamir/SSS; no full-key materialization. |
+| **I** | **Core MPC** | 33-node DVC threshold; Shamir/DKG; no full-key materialization. |
 | **II** | **PQC Hardening** | Kyber-768 integration in authorization and KEM; NIST alignment. |
 | **III** | **ZK-Fault Proofs & Audit** | Groth16 (Bn254) verification in `prepare_signing_shards`; third-party code audit; ZKP circuit audit. |
-| **IV** | **Self-Healing & Production** | Heartbeat monitor; proactive resharing; Kademlia/Gossipsub; hardened storage and L-SG. |
+| **IV** | **Self-Healing & Production** | Heartbeat monitor; proactive resharing; Kademlia/Gossipsub; liveness-dependent lock; hardened storage and L-SG. |
 
 | 阶段 | 里程碑 | 目标 |
 |:-----|:-------|:-----|
-| **I** | **核心 MPC** | 18 节点门限实现；Shamir/SSS；无完整密钥具象化。 |
+| **I** | **核心 MPC** | 33 节点 DVC 门限；Shamir/DKG；无完整密钥具象化。 |
 | **II** | **PQC 加固** | Kyber-768 接入授权与 KEM；对齐 NIST。 |
 | **III** | **ZK-Fault Proofs 与审计** | Groth16（Bn254）在 prepare_signing_shards 中验证；第三方代码审计；ZKP 电路审计。 |
-| **IV** | **自愈与生产** | 心跳监控；主动重组；Kademlia/Gossipsub；加固存储与 L-SG。 |
+| **IV** | **自愈与生产** | 心跳监控；主动重组；活性依赖锁；加固存储与 L-SG。 |
 
 ### 7.2 Protocol Evolution Roadmap / 协议演进路线图
 
@@ -291,9 +320,11 @@ To counter DDoS or social-engineering attacks, the **L-SG protocol** supports **
 
 ## 8. Conclusion / 结论
 
-Luvion proposes a **sovereign asset fortress** where **no single key** exists, **every shard is ZK-verified**, and the **mesh self-heals** under failure. By combining **threshold MPC**, **PQC**, and **ZK-Fault Proofs** with institutional safeguards (L-SG, risk preview, hardened storage), the protocol targets **institutional-grade** security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.
+Luvion is not only a security tool but a necessary step for Web3 toward **institutional- and quantum-grade** evolution. By deeply integrating **33-node distributed consensus** with the **liveness-dependent lock**, the protocol delivers a truly “worry-free” ownership experience.
 
-Luvion 提出一种**主权资产堡垒**：**不存在单一密钥**、**每份分片经 ZK 验证**、**网格在故障下自愈**。通过将**门限 MPC**、**PQC** 与 **ZK-Fault Proofs** 同机构级防护（L-SG、风险预览、加固存储）结合，协议面向**机构级**安全与可审计性。本白皮书为后续规范、实现与第三方审计提供技术与结构基础。
+Luvion proposes a **sovereign asset fortress** where **no single key** exists, **every shard is ZK-verified**, and the **mesh self-heals** under failure. With **threshold MPC (33/22)**, **PQC**, **ZK-Fault Proofs**, and institutional safeguards (L-SG, **liveness-dependent lock**, risk preview, hardened storage), the protocol targets **institutional-grade** security and auditability. This whitepaper provides a technical and structural foundation for further specification, implementation, and third-party review.
+
+Luvion Protocol 不仅仅是安全工具，更是 Web3 向**机构级、量子级**演进的必经之路。通过将 **33 节点分布式共识**与**活性依赖锁**深度结合，为用户提供真正「无忧」的所有权体验。本白皮书为后续规范、实现与第三方审计提供技术与结构基础。
 
 ---
 
@@ -309,3 +340,5 @@ Luvion 提出一种**主权资产堡垒**：**不存在单一密钥**、**每份
 
 *Document classification: Draft for institutional and investment review. Not a commitment to a specific implementation or timeline.*  
 *文档级别：供机构与投资审查的草稿。不构成对具体实现或时间表的承诺。*
+
+*© 2026 Luvion Labs. Confidential Technical Document.*

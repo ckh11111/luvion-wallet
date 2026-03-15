@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useLuvionStore } from './store/useLuvionStore';
 import LuvionTerrariaWalletRestore from './pages/LuvionTerrariaWalletRestore';
+import { Landing } from './pages/Landing';
 
 const AppContent = () => {
   const s = useLuvionStore();
+  const location = useLocation();
+  const isLanding = location.pathname === '/';
 
   useEffect(() => {
+    if (isLanding) return;
     s.refreshNodes();
     s.refreshAllBalances();
     const timerNodes = setInterval(() => s.refreshNodes(), 5000);
@@ -16,6 +20,15 @@ const AppContent = () => {
       clearInterval(timerBalances);
     };
   }, []);
+
+  if (isLanding) {
+    return (
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
+  }
 
   return (
     <Routes>
