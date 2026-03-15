@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/tauri';
 import { TransactionPreview } from './TransactionPreview';
+import { handleBiometricVerify } from '../utils/webauthn';
 
 const LoadingSpinner = () => (
   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -36,15 +37,27 @@ export const WithdrawModal = ({ onClose }: { onClose?: () => void }) => {
     setIsAuthenticating(true);
     setMessage(null);
     try {
-      const isAuth = await invoke<boolean>('authenticate_biometric');
-      if (isAuth) {
-        await executeThresholdSignature();
-      } else {
+      const supportsWebAuthn =
+        typeof navigator !== 'undefined' && typeof navigator.credentials?.create === 'function';
+      let isAuth = false;
+      if (supportsWebAuthn) {
+        isAuth = await handleBiometricVerify(
+          () => executeThresholdSignature(),
+          () => setMessage({ type: 'error', text: '验证失败，请使用指纹/面容重试' })
+        );
+      }
+      if (!isAuth && !supportsWebAuthn) {
+        isAuth = await invoke<boolean>('authenticate_biometric');
+        if (isAuth) await executeThresholdSignature();
+      }
+      if (!isAuth && !message) {
         setMessage({ type: 'error', text: 'Authentication Failed.' });
       }
     } catch (err) {
-      setMessage({ type: 'error', text: 'Authentication Failed.' });
-      try { console.error('Biometric failed', err); } catch { /* noop */ }
+      setMessage({ type: 'error', text: '验证失败，请使用指纹/面容重试' });
+      try {
+        console.error('Biometric failed', err);
+      } catch { /* noop */ }
     } finally {
       setIsAuthenticating(false);
     }

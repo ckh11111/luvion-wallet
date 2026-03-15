@@ -1,11 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 极简主义核心配置 */
+:root {
+  --bg-dark: #050505;
+  --accent-green: #00FF94; /* 更有科技感的绿色 */
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text-secondary: #888888;
+}
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px; /* 大圆角更现代 */
+}
+
+.node-dot-active {
+  box-shadow: 0 0 10px var(--accent-green);
+  background-color: var(--accent-green);
+}
+
+/* 幽灵按钮 (Ghost Button) */
+.btn-primary {
+  background: white;
+  color: black;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+}
+
 body {
   margin: 0;
-  background-color: #1a1a1a;
+  /* 泰拉瑞亚经典的明亮天空蓝背景 */
+  background: linear-gradient(180deg, #2E81FF 0%, #68A7FF 100%);
+  background-attachment: fixed;
+  color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* 游戏大标题字体 (8-bit) */
+.font-arcade,
+.font-game {
+  font-family: 'Press Start 2P', cursive;
+  line-height: 1.5;
+}
+
+/* 游戏正文字体 (高可读性像素) */
+.font-pixel {
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.05em;
+}
+
+.pixel-font {
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.05em;
+}
+
+/* 强制所有元素使用像素化渲染（边缘不发虚） */
+* {
+  image-rendering: pixelated;
+}
+
+/* 隐藏滚动条 */
+::-webkit-scrollbar {
+  display: none;
 }
 
 .metal-chassis {
